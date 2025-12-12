@@ -1,21 +1,119 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการจองโต๊ะ (Admin Only)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #f8f9fa; }
+        .container { max-width: 600px; margin-top: 20px; }
+        .hidden { display: none; }
+        #reader { width: 100%; }
+        .card-ticket { border: 2px dashed #000; padding: 20px; background: #fff; text-align: center; margin-top: 20px;}
+        .status-used { color: red; font-weight: bold; }
+        .status-ok { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3 class="text-center mb-4">ระบบจัดการจองโต๊ะ</h3>
+
+    <div id="loginSection" class="card p-4">
+        <h4>เข้าสู่ระบบแอดมิน</h4>
+        <input type="email" id="email" class="form-control mb-2" placeholder="Email (เช่น ping@pong.com)">
+        <input type="password" id="password" class="form-control mb-2" placeholder="Password">
+        <button onclick="login()" class="btn btn-primary w-100">เข้าสู่ระบบ</button>
+    </div>
+
+    <div id="adminDashboard" class="hidden">
+        <div class="d-flex justify-content-between mb-3">
+            <span>สวัสดี, Admin</span>
+            <button onclick="logout()" class="btn btn-sm btn-secondary">ออกจากระบบ</button>
+        </div>
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item"><button class="nav-link active" id="create-tab" data-bs-toggle="tab" data-bs-target="#create" type="button">สร้างการจอง</button></li>
+            <li class="nav-item"><button class="nav-link" id="scan-tab" data-bs-toggle="tab" data-bs-target="#scan" type="button">สแกนเข้างาน</button></li>
+            <li class="nav-item"><button class="nav-link" id="list-tab" data-bs-toggle="tab" data-bs-target="#list" type="button" onclick="loadBookings()">รายการจอง</button></li>
+        </ul>
+
+        <div class="tab-content pt-3" id="myTabContent">
+            
+            <div class="tab-pane fade show active" id="create">
+                <div class="card p-3">
+                    <h5>ข้อมูลลูกค้า</h5>
+                    <input type="text" id="custName" class="form-control mb-2" placeholder="ชื่อลูกค้า">
+                    <input type="tel" id="custPhone" class="form-control mb-2" placeholder="เบอร์โทร">
+                    <input type="text" id="tableNo" class="form-control mb-2" placeholder="เลขโต๊ะ / โซน">
+                    <input type="text" id="paymentRef" class="form-control mb-2" placeholder="เลขอ้างอิงโอนเงิน">
+                    <button onclick="addBooking()" class="btn btn-success w-100">บันทึกและสร้าง QR Code</button>
+                </div>
+                
+                <div id="ticketResult" class="hidden">
+                    <div class="card-ticket" id="printableTicket">
+                        <h4>บัตรจองโต๊ะ</h4>
+                        <div id="qrcodeDisplay" class="d-flex justify-content-center my-3"></div>
+                        <p><strong>ชื่อ:</strong> <span id="ticketName"></span></p>
+                        <p><strong>โต๊ะ:</strong> <span id="ticketTable"></span></p>
+                        <small class="text-muted">โปรดแสดง QR นี้ให้พนักงานสแกน</small>
+                    </div>
+                    <button onclick="window.print()" class="btn btn-outline-dark w-100 mt-2">พิมพ์ / บันทึกเป็น PDF</button>
+                    <button onclick="resetForm()" class="btn btn-link w-100 mt-2">จองให้คนต่อไป</button>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="scan">
+                <div class="card p-3 text-center">
+                    <div id="reader"></div>
+                    <div id="scanResult" class="mt-3"></div>
+                    <button onclick="startScanner()" class="btn btn-primary mt-2">เริ่มกล้อง</button>
+                    <button onclick="stopScanner()" class="btn btn-danger mt-2 hidden" id="stopCamBtn">ปิดกล้อง</button>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="list">
+                <button onclick="loadBookings()" class="btn btn-sm btn-info mb-2">รีเฟรชข้อมูล</button>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm" style="font-size: 0.9rem;">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ชื่อ/โต๊ะ</th>
+                                <th>สถานะ</th>
+                                <th>จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingListTable">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module">
-    // --- ส่วนนำเข้าเครื่องมือ (ห้ามแก้ไข) ---
+    // --- ตั้งค่า Firebase ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    // --- ตั้งค่า Firebase (ผมใส่รหัสของคุณให้แล้ว) ---
+    // รหัส Firebase ของคุณ (ใส่ให้แล้ว)
     const firebaseConfig = {
-        apiKey: "AIzaSyD3s78zRwEHU5WAiSQIg78ZxWbS5QjXYws",
-        authDomain: "my-booking-table-855b0.firebaseapp.com",
-        projectId: "my-booking-table-855b0",
-        storageBucket: "my-booking-table-855b0.firebasestorage.app",
-        messagingSenderId: "589914860402",
-        appId: "1:589914860402:web:d1033ebdd14b7f982c0beb",
-        measurementId: "G-DFMJ4G668D"
+      apiKey: "AIzaSyD3s78zRwEHU5WAiSQIg78ZxWbS5QjXYws",
+      authDomain: "my-booking-table-855b0.firebaseapp.com",
+      projectId: "my-booking-table-855b0",
+      storageBucket: "my-booking-table-855b0.firebasestorage.app",
+      messagingSenderId: "589914860402",
+      appId: "1:589914860402:web:d1033ebdd14b7f982c0beb",
+      measurementId: "G-DFMJ4G668D"
     };
 
-    // เริ่มต้นระบบ
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
@@ -181,3 +279,6 @@
         }
     };
 </script>
+
+</body>
+</html>
