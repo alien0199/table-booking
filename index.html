@@ -10,64 +10,106 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap');
 
-        body { font-family: 'Kanit', sans-serif; background-color: #000; color: #fff; padding-bottom: 80px; }
-        .container { max-width: 500px; margin-top: 15px; }
+        body { font-family: 'Kanit', sans-serif; background-color: #050505; color: #fff; padding-bottom: 80px; }
+        .container { max-width: 450px; margin-top: 15px; }
         .hidden { display: none !important; }
         
-        /* สไตล์บัตรจอง (แสดงผลสด) */
+        /* การ์ดบัตรจอง (ดีไซน์ใหม่ จัดกึ่งกลางเป๊ะ) */
         .ticket-card {
-            background: linear-gradient(180deg, #6a11cb 0%, #2575fc 100%);
-            border-radius: 20px;
-            padding: 30px 20px;
+            background: linear-gradient(135deg, #6200ea 0%, #b388ff 100%); /* สีม่วงไล่เฉด */
+            border-radius: 25px;
+            padding: 40px 20px;
             text-align: center;
-            box-shadow: 0 0 20px rgba(106, 17, 203, 0.6);
-            border: 2px solid rgba(255,255,255,0.2);
-            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(98, 0, 234, 0.5);
+            border: 4px solid #fff;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* จัดทุกอย่างกึ่งกลางแนวนอน */
+            justify-content: center;
+            margin: 0 auto; /* จัดการ์ดให้อยู่กลางจอ */
+            max-width: 350px;
         }
         
-        .event-title { font-size: 26px; font-weight: bold; text-shadow: 2px 2px 0px #000; line-height: 1.2; }
-        .event-sub { font-size: 22px; color: #ffeb3b; font-weight: bold; text-shadow: 1px 1px 0px #000; margin-bottom: 15px; }
-        .ticket-header { background: rgba(0,0,0,0.3); display: inline-block; padding: 5px 20px; border-radius: 50px; font-size: 16px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.5); }
+        .event-title { font-size: 28px; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin-bottom: 5px; line-height: 1.1; }
+        .event-sub { font-size: 24px; color: #ffeb3b; font-weight: 700; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); margin-bottom: 20px; }
         
-        /* กล่องขาวรองหลัง QR Code */
+        .ticket-header { 
+            background: rgba(255,255,255,0.2); 
+            border: 1px solid rgba(255,255,255,0.6);
+            padding: 5px 25px; 
+            border-radius: 50px; 
+            font-size: 16px; 
+            margin-bottom: 25px; 
+            backdrop-filter: blur(5px);
+        }
+        
+        /* กล่องขาวรองหลัง QR Code (ปรับให้พอดี) */
         .qr-bg {
             background: #fff;
-            padding: 10px;
-            border-radius: 10px;
-            display: inline-block;
-            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            /* บังคับขนาดกล่องให้พอดีกับ QR */
+            width: 210px; 
+            height: 210px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .cust-name { font-size: 24px; font-weight: bold; margin-top: 10px; }
+        /* ปรับรูป QR ให้พอดี */
+        #qrcodeDisplay img { 
+            display: block; 
+            margin: 0 auto; 
+        }
+        
+        .cust-name { font-size: 26px; font-weight: 700; margin-bottom: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        
         .table-badge { 
-            font-size: 40px; font-weight: bold; 
-            background: #ffeb3b; color: #000; 
-            display: inline-block; padding: 0px 30px; 
+            font-size: 48px; 
+            font-weight: 700; 
+            background: #ffeb3b; 
+            color: #000; 
+            padding: 0px 40px; 
             border-radius: 15px; 
-            box-shadow: 4px 4px 0px #000;
-            transform: rotate(-2deg);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
             margin-top: 5px;
+            display: inline-block;
         }
         
-        /* UI อื่นๆ */
-        .nav-pills .nav-link.active { background: linear-gradient(90deg, #ff512f, #dd2476); border: none; }
-        .nav-pills .nav-link { color: #aaa; background: #222; margin: 0 2px; }
-        .form-control { background: #222; border: 1px solid #444; color: #fff; border-radius: 10px; height: 50px; font-size: 1.1rem; }
-        .btn-main { background: linear-gradient(90deg, #11998e, #38ef7d); border: none; height: 55px; font-size: 1.2rem; font-weight: bold; color: #fff; border-radius: 12px; }
+        .footer-note { margin-top: 20px; font-size: 14px; opacity: 0.9; font-weight: 300; }
+
+        /* UI ปุ่มและฟอร์ม */
+        .form-control { background: #222; border: 1px solid #444; color: #fff; border-radius: 12px; height: 50px; font-size: 1.1rem; text-align: center; }
+        .form-control:focus { background: #333; color: #fff; border-color: #6200ea; box-shadow: none; }
+        .form-control::placeholder { color: #888; }
         
-        /* สถานะโต๊ะ */
-        .status-card { background: #222; border-radius: 10px; border: 1px solid #333; }
-        .status-booked { color: #ffc107; border-top: 4px solid #ffc107; }
-        .status-used { color: #2ecc71; border-top: 4px solid #2ecc71; }
+        .btn-main { 
+            background: linear-gradient(90deg, #00c6ff, #0072ff); 
+            border: none; height: 55px; 
+            font-size: 1.2rem; font-weight: 700; 
+            color: #fff; border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+            transition: transform 0.1s;
+        }
+        .btn-main:active { transform: scale(0.98); }
+        
+        .nav-pills .nav-link { background: #222; color: #aaa; border-radius: 10px; margin: 0 2px; }
+        .nav-pills .nav-link.active { background: #6200ea; color: #fff; font-weight: bold; }
+        
+        .status-card { background: #222; border-radius: 12px; border: 1px solid #333; transition: all 0.2s; }
+        .status-booked { border-bottom: 4px solid #ffc107; }
+        .status-used { border-bottom: 4px solid #2ecc71; opacity: 0.7; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h4 class="text-center mb-4 fw-bold text-white">✨ ระบบจองโต๊ะ <span style="color:#ffeb3b">สรรพยาฯ</span></h4>
+    <h4 class="text-center mb-4 fw-bold">✨ จองโต๊ะ <span style="color:#ffeb3b">สรรพยาฯ</span></h4>
 
     <ul class="nav nav-pills nav-fill mb-4">
         <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#create">📝 จอง</button></li>
@@ -78,22 +120,22 @@
 
     <div class="tab-content">
         <div class="tab-pane fade show active" id="create">
-            <div class="card p-4 border-0 shadow-lg" style="background: #1a1a1a; border-radius: 20px;">
-                <input type="text" id="custName" class="form-control mb-3" placeholder="ชื่อลูกค้า (เช่น พี่บี)">
+            <div class="card p-4 border-0 shadow mb-4" style="background: #151515; border-radius: 20px;">
+                <input type="text" id="custName" class="form-control mb-3" placeholder="ชื่อลูกค้า (เช่น พี่หน่อย)">
                 <input type="tel" id="custPhone" class="form-control mb-3" placeholder="เบอร์โทร">
-                <input type="text" id="tableNo" class="form-control mb-3" placeholder="เลขโต๊ะ (เช่น A1)">
-                <input type="text" id="paymentRef" class="form-control mb-4" placeholder="หมายเหตุ / ยอดเงิน">
+                <input type="text" id="tableNo" class="form-control mb-3" placeholder="เลขโต๊ะ (เช่น VIP1)">
+                <input type="text" id="paymentRef" class="form-control mb-4" placeholder="หมายเหตุ">
                 
-                <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100 shadow">✅ ยืนยันการจอง</button>
+                <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100">✅ ยืนยันการจอง</button>
             </div>
             
-            <div id="ticketResult" class="hidden mt-3 animate__animated animate__fadeInUp">
-                <p class="text-center text-success mb-0">🎉 สร้างรายการสำเร็จ!</p>
-                <p class="text-center text-secondary small">แคปหน้าจอนี้ส่งให้ลูกค้าได้เลย</p>
+            <div id="ticketResult" class="hidden animate__animated animate__fadeInUp">
+                <p class="text-center text-success mb-2">🎉 สร้างรายการสำเร็จ!</p>
                 
                 <div class="ticket-card" id="finalTicket">
                     <div class="event-title">สรรพยา บ้านเรา</div>
                     <div class="event-sub">โพ-ออก เฟสติวัล</div>
+                    
                     <div class="ticket-header">บัตรจองโต๊ะ VIP</div>
                     
                     <div class="qr-bg">
@@ -102,10 +144,11 @@
                     
                     <div class="cust-name" id="displayName">ชื่อลูกค้า</div>
                     <div class="table-badge" id="displayTable">A1</div>
-                    <div class="mt-3 small" style="opacity: 0.7;">*โปรดแสดงภาพนี้เพื่อเข้างาน</div>
+                    <div class="footer-note">*โปรดแสดงภาพนี้เพื่อเข้างาน</div>
                 </div>
 
-                <button onclick="resetForm()" class="btn btn-outline-secondary w-100 mt-4 rounded-pill">เริ่มรายการใหม่</button>
+                <div class="text-center mt-3 text-muted small">แคปหน้าจอนี้ส่งให้ลูกค้าได้เลยครับ 📸</div>
+                <button onclick="resetForm()" class="btn btn-outline-secondary w-100 mt-3 rounded-pill">เริ่มรายการใหม่</button>
             </div>
         </div>
 
@@ -115,9 +158,9 @@
         </div>
 
         <div class="tab-pane fade" id="scan">
-            <div class="card p-3 border-0 bg-dark text-center">
+            <div class="card p-3 border-0 bg-dark text-center" style="border-radius: 20px;">
                 <div id="reader" style="border-radius: 15px; overflow: hidden;"></div>
-                <div id="scanResult" class="mt-3 text-white">พร้อมสแกน...</div>
+                <div id="scanResult" class="mt-3 text-white fw-bold">พร้อมสแกน...</div>
                 <button onclick="startScanner()" class="btn btn-primary mt-3 w-100 py-3 rounded-pill">📸 เปิดกล้อง</button>
                 <button onclick="stopScanner()" class="btn btn-secondary mt-2 w-100 hidden" id="stopCamBtn">ปิดกล้อง</button>
             </div>
@@ -144,7 +187,7 @@
 <div class="modal fade" id="qrModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-dark text-white border-secondary">
-      <div class="modal-body text-center">
+      <div class="modal-body text-center p-4">
          <div id="qrModalBody" class="bg-white p-3 d-inline-block rounded"></div>
       </div>
       <div class="modal-footer border-secondary p-1">
@@ -176,7 +219,7 @@
     let html5QrcodeScanner = null;
     let qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
 
-    // --- 1. สร้างการจอง (แบบ QR ขึ้นสดทันที) ---
+    // --- 1. สร้างการจอง ---
     window.addBooking = async () => {
         const btn = document.getElementById('btnSave');
         const name = document.getElementById('custName').value;
@@ -194,11 +237,14 @@
                 name, phone, table, paymentRef: payRef, status: "booked", createdAt: serverTimestamp()
             });
 
-            // 2. แสดงผล QR Code ทันที (ไม่ต้องแปลงภาพ)
+            // 2. แสดงผลบัตรจอง
             document.getElementById('ticketResult').classList.remove('hidden');
             
+            // ล้าง QR เก่าก่อนสร้างใหม่
             const qrContainer = document.getElementById("qrcodeDisplay");
-            qrContainer.innerHTML = ""; // ล้างค่าเก่า
+            qrContainer.innerHTML = ""; 
+            
+            // สร้าง QR Code ขนาด 180x180 (ให้พอดีกับกล่องขาว 210x210)
             new QRCode(qrContainer, { 
                 text: docRef.id, 
                 width: 180, 
@@ -208,14 +254,16 @@
                 correctLevel : QRCode.CorrectLevel.H
             });
 
-            // อัปเดตข้อความในบัตร
+            // ใส่ข้อมูลลงการ์ด
             document.getElementById('displayName').innerText = name;
             document.getElementById('displayTable').innerText = table;
 
             btn.disabled = false; btn.innerText = "✅ ยืนยันการจอง";
             
-            // เลื่อนหน้าจอลงมาให้เห็นบัตร
-            document.getElementById('ticketResult').scrollIntoView({behavior: "smooth"});
+            // เลื่อนหน้าจอลงมา
+            setTimeout(() => {
+                document.getElementById('ticketResult').scrollIntoView({behavior: "smooth"});
+            }, 300);
 
         } catch (e) {
             console.error(e);
@@ -241,7 +289,7 @@
         const snapshot = await getDocs(q);
         display.innerHTML = "";
         
-        if(snapshot.empty) { display.innerHTML = "<div class='text-center text-muted'>ว่างเปล่า</div>"; return; }
+        if(snapshot.empty) { display.innerHTML = "<div class='text-center text-muted'>ยังไม่มีการจอง</div>"; return; }
         
         snapshot.forEach((doc) => {
             const d = doc.data();
@@ -250,7 +298,7 @@
             const statusText = isUsed ? '🟢 มาแล้ว' : '🟡 จอง';
             
             display.innerHTML += `
-                <div class="col-4 col-sm-3">
+                <div class="col-4 col-sm-4">
                     <div class="status-card p-2 text-center ${statusClass}">
                         <h4 class="fw-bold mb-0 text-white">${d.table}</h4>
                         <small class="d-block text-truncate text-secondary" style="font-size:0.8rem;">${d.name}</small>
@@ -325,7 +373,6 @@
         });
     };
     
-    // ฟังก์ชันสร้าง QR สดๆ ให้แอดมินดู
     window.showQr = (id) => {
         document.getElementById('qrModalBody').innerHTML = "";
         new QRCode(document.getElementById("qrModalBody"), { 
