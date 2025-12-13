@@ -322,7 +322,7 @@
         document.getElementById('qrcodeDisplay').innerHTML = "";
     };
 
-    // --- 2. โหลดสถานะโต๊ะ ---
+    // --- 2. โหลดสถานะโต๊ะ (ปรับปรุงใหม่ แสดงเวลาเข้างาน) ---
     window.loadTableStatus = async () => {
         const display = document.getElementById('statusList');
         display.innerHTML = "<div class='text-center text-white'>⏳ กำลังโหลด...</div>";
@@ -336,8 +336,18 @@
             const d = doc.data();
             const isUsed = d.status === 'used';
             const statusClass = isUsed ? 'status-used' : 'status-booked';
-            const statusText = isUsed ? '🟢 มาแล้ว' : '🟡 จอง';
             const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
+            
+            // คำนวณข้อความแสดงสถานะ
+            let statusText = '🟡 จองแล้ว';
+            if (isUsed) {
+                let timeStr = "-";
+                if(d.checkInTime) {
+                    const date = d.checkInTime.toDate();
+                    timeStr = date.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+                }
+                statusText = `🟢 เข้า ${timeStr} น.`;
+            }
             
             display.innerHTML += `
                 <div class="col-4 col-sm-4">
