@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ระบบจองโต๊ะ - สรรพยา เฟสติวัล</title>
+    <title>ระบบรันคิวโต๊ะ - สรรพยา เฟสติวัล</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -13,25 +13,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap');
 
         body { font-family: 'Kanit', sans-serif; background-color: #050505; color: #fff; padding-bottom: 80px; }
-        .container { max-width: 100%; margin-top: 15px; } /* ปรับให้เต็มจอสำหรับตาราง */
-        .admin-container { max-width: 1200px; margin: 0 auto; } /* คอนเทนเนอร์เฉพาะหน้าแอดมิน */
-        .user-container { max-width: 450px; margin: 0 auto; } /* คอนเทนเนอร์หน้ามือถือลูกค้า */
-        
+        .container { max-width: 450px; margin-top: 15px; }
         .hidden { display: none !important; }
         
-        /* สไตล์ตารางแอดมิน */
-        .table-custom {
-            background-color: #1a1a1a;
-            color: #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            font-size: 0.9rem;
-        }
-        .table-custom th { background-color: #333; color: #ffeb3b; border-color: #444; }
-        .table-custom td { background-color: #1a1a1a; color: #ddd; border-color: #333; vertical-align: middle; }
-        .badge-time { background: #444; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; }
-        .badge-checkin { background: #198754; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; }
-
         /* การ์ดบัตรจอง */
         .ticket-card {
             background: linear-gradient(135deg, #6200ea 0%, #b388ff 100%);
@@ -53,8 +37,8 @@
         .table-badge { font-size: 48px; font-weight: 700; background: #ffeb3b; color: #000; padding: 0px 40px; border-radius: 15px; box-shadow: 0 5px 10px rgba(0,0,0,0.3); margin-top: 5px; display: inline-block; }
         .footer-note { margin-top: 20px; font-size: 14px; opacity: 0.9; font-weight: 300; }
 
-        /* UI ทั่วไป */
-        .form-control { background: #222; border: 1px solid #444; color: #fff; border-radius: 12px; height: 50px; font-size: 1.1rem; text-align: center; }
+        .form-control, .form-select { background: #222; border: 1px solid #444; color: #fff; border-radius: 12px; height: 50px; font-size: 1.1rem; text-align: center; }
+        .form-control:focus, .form-select:focus { background: #333; color: #fff; border-color: #6200ea; box-shadow: none; }
         .btn-main { background: linear-gradient(90deg, #00c6ff, #0072ff); border: none; height: 55px; font-size: 1.2rem; font-weight: 700; color: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4); }
         .nav-pills .nav-link { background: #222; color: #aaa; border-radius: 10px; margin: 0 2px; }
         .nav-pills .nav-link.active { background: #6200ea; color: #fff; font-weight: bold; }
@@ -62,13 +46,18 @@
         .status-card { background: #222; border-radius: 12px; border: 1px solid #333; transition: all 0.2s; }
         .status-booked { border-bottom: 4px solid #ffc107; }
         .status-used { border-bottom: 4px solid #2ecc71; opacity: 0.7; }
+        
+        /* สไตล์ตารางแอดมิน */
+        .table-custom { background-color: #1a1a1a; color: #fff; font-size: 0.9rem; }
+        .table-custom th { background-color: #333; color: #ffeb3b; }
+        .table-custom td { vertical-align: middle; color: #ddd; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="user-container">
-        <h4 class="text-center mb-4 fw-bold">✨ จองโต๊ะ <span style="color:#ffeb3b">สรรพยาฯ</span></h4>
+        <h4 class="text-center mb-4 fw-bold">✨ ระบบจองโต๊ะ <span style="color:#ffeb3b">สรรพยาฯ</span></h4>
 
         <ul class="nav nav-pills nav-fill mb-4">
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#create">📝 จอง</button></li>
@@ -82,26 +71,35 @@
         <div class="tab-pane fade show active" id="create">
             <div class="user-container">
                 <div class="card p-4 border-0 shadow mb-4" style="background: #151515; border-radius: 20px;">
+                    
+                    <div class="mb-3">
+                        <label class="text-secondary small mb-1">เลือกชุดโต๊ะ (ระบบจะรันเลขให้อัตโนมัติ)</label>
+                        <select id="zoneSelect" class="form-select mb-3">
+                            <option value="VIP">ชุดที่ 1 (เริ่ม VIP001)</option>
+                            <option value="A">ชุดที่ 2 (เริ่ม A001)</option>
+                        </select>
+                    </div>
+
                     <input type="text" id="custName" class="form-control mb-3" placeholder="ชื่อลูกค้า">
                     <input type="tel" id="custPhone" class="form-control mb-3" placeholder="เบอร์โทร">
-                    <input type="text" id="tableNo" class="form-control mb-3" placeholder="เลขโต๊ะ (เช่น VIP1)">
-                    <input type="text" id="paymentRef" class="form-control mb-4" placeholder="หมายเหตุ">
-                    <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100">✅ ยืนยันการจอง</button>
+                    <input type="text" id="paymentRef" class="form-control mb-4" placeholder="หมายเหตุ / ยอดเงิน">
+                    
+                    <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100">✅ รันคิวและยืนยัน</button>
                 </div>
                 
                 <div id="ticketResult" class="hidden animate__animated animate__fadeInUp">
-                    <p class="text-center text-success mb-2">🎉 สำเร็จ!</p>
+                    <p class="text-center text-success mb-2">🎉 จองสำเร็จ!</p>
                     <div class="ticket-card" id="finalTicket">
                         <div class="event-title">สรรพยา บ้านเรา</div>
                         <div class="event-sub">โพ-ออก เฟสติวัล</div>
                         <div class="ticket-header">บัตรจองโต๊ะ VIP</div>
                         <div class="qr-bg"><div id="qrcodeDisplay"></div></div>
                         <div class="cust-name" id="displayName">ชื่อลูกค้า</div>
-                        <div class="table-badge" id="displayTable">A1</div>
+                        <div class="table-badge" id="displayTable">...</div>
                         <div class="footer-note">*โปรดแสดงภาพนี้เพื่อเข้างาน</div>
                     </div>
                     <div class="text-center mt-3 text-muted small">แคปหน้าจอนี้ส่งให้ลูกค้าได้เลยครับ 📸</div>
-                    <button onclick="resetForm()" class="btn btn-outline-secondary w-100 mt-3 rounded-pill">เริ่มรายการใหม่</button>
+                    <button onclick="resetForm()" class="btn btn-outline-secondary w-100 mt-3 rounded-pill">จองคิวต่อไป</button>
                 </div>
             </div>
         </div>
@@ -133,27 +131,24 @@
                 </div>
             </div>
 
-            <div id="adminContent" class="hidden admin-container">
+            <div id="adminContent" class="hidden">
                 <div class="d-flex justify-content-between mb-3 text-white align-items-center">
                     <span class="h4">จัดการข้อมูล (Admin)</span>
                     <button onclick="logout()" class="btn btn-sm btn-danger">ออกจากระบบ</button>
                 </div>
-                <button onclick="loadBookingsAdmin()" class="btn btn-info mb-3"><i class="bi bi-arrow-clockwise"></i> โหลดข้อมูลล่าสุด</button>
+                <button onclick="loadBookingsAdmin()" class="btn btn-info w-100 mb-3"><i class="bi bi-arrow-clockwise"></i> โหลดข้อมูลล่าสุด</button>
                 
                 <div class="table-responsive">
                     <table class="table table-custom text-center table-bordered">
                         <thead>
                             <tr>
                                 <th>โต๊ะ</th>
-                                <th>ชื่อลูกค้า / เบอร์</th>
-                                <th>📅 จองเมื่อ</th>
-                                <th>✅ เข้างานตอน</th>
+                                <th>ชื่อลูกค้า</th>
                                 <th>สถานะ</th>
                                 <th>จัดการ</th>
                             </tr>
                         </thead>
-                        <tbody id="adminList">
-                            </tbody>
+                        <tbody id="adminList"></tbody>
                     </table>
                 </div>
             </div>
@@ -196,39 +191,75 @@
     let html5QrcodeScanner = null;
     let qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
 
-    // ฟอร์แมตวันที่แบบไทย
     function formatThaiDate(timestamp) {
         if(!timestamp) return "-";
-        const date = timestamp.toDate();
-        return date.toLocaleString('th-TH', { 
-            day: '2-digit', month: '2-digit', year: '2-digit', 
-            hour: '2-digit', minute: '2-digit' 
+        return timestamp.toDate().toLocaleString('th-TH', { 
+            hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit'
         });
     }
 
-    // --- 1. สร้างการจอง ---
+    // --- ฟังก์ชันคำนวณเลขคิวถัดไป (Gap Filling) ---
+    async function getNextQueue(prefix) {
+        const q = query(collection(db, "bookings"));
+        const snapshot = await getDocs(q);
+        
+        // 1. ดึงเลขคิวที่มีอยู่แล้วเฉพาะโซนนี้
+        let existingNumbers = [];
+        snapshot.forEach(doc => {
+            const t = doc.data().table; // เช่น "VIP001"
+            if (t.startsWith(prefix)) {
+                // ตัด prefix ออกเหลือแต่เลข แล้วแปลงเป็น int
+                const numPart = parseInt(t.replace(prefix, ''));
+                if (!isNaN(numPart)) {
+                    existingNumbers.push(numPart);
+                }
+            }
+        });
+
+        // 2. เรียงลำดับจากน้อยไปมาก
+        existingNumbers.sort((a, b) => a - b);
+
+        // 3. หา "ช่องว่าง" (Gap)
+        let nextNum = 1;
+        for (let num of existingNumbers) {
+            if (num === nextNum) {
+                nextNum++;
+            } else if (num > nextNum) {
+                // เจอช่องว่าง! (เช่น มี 1, 2, 4 -> num คือ 4 แต่ nextNum คือ 3 -> เจอช่องว่างที่ 3)
+                break; 
+            }
+        }
+
+        // 4. คืนค่ารูปแบบ 3 หลัก (001, 002...)
+        return prefix + String(nextNum).padStart(3, '0');
+    }
+
+    // --- 1. สร้างการจอง (Auto Queue) ---
     window.addBooking = async () => {
         const btn = document.getElementById('btnSave');
+        const zonePrefix = document.getElementById('zoneSelect').value; // VIP หรือ A
         const name = document.getElementById('custName').value;
         const phone = document.getElementById('custPhone').value;
-        const table = document.getElementById('tableNo').value.trim().toUpperCase();
         const payRef = document.getElementById('paymentRef').value;
 
-        if(!name || !table) return alert("❌ กรุณาใส่ชื่อและเลขโต๊ะ");
-        btn.disabled = true; btn.innerText = "⏳ กำลังตรวจสอบ...";
+        if(!name) return alert("❌ กรุณาใส่ชื่อลูกค้า");
+        
+        btn.disabled = true; btn.innerText = "⏳ กำลังคำนวณคิว...";
 
         try {
-            const q = query(collection(db, "bookings"), where("table", "==", table));
-            const querySnapshot = await getDocs(q);
-            if (!querySnapshot.empty) {
-                alert(`❌ โต๊ะ ${table} ถูกจองไปแล้วครับ!`);
-                btn.disabled = false; btn.innerText = "✅ ยืนยันการจอง";
+            // เรียกฟังก์ชันหาเลขคิว (รวมถึงการเติมช่องว่างที่ถูกยกเลิก)
+            const autoTableNo = await getNextQueue(zonePrefix);
+
+            // แจ้งเตือนยืนยันก่อนบันทึก
+            if(!confirm(`ระบบจัดคิวให้ที่โต๊ะ: ${autoTableNo}\nยืนยันการจองไหมครับ?`)) {
+                btn.disabled = false; btn.innerText = "✅ รันคิวและยืนยัน";
                 return;
             }
 
             btn.innerText = "⏳ กำลังบันทึก...";
+            
             const docRef = await addDoc(collection(db, "bookings"), {
-                name, phone, table, paymentRef: payRef, status: "booked", createdAt: serverTimestamp()
+                name, phone, table: autoTableNo, paymentRef: payRef, status: "booked", createdAt: serverTimestamp()
             });
 
             document.getElementById('ticketResult').classList.remove('hidden');
@@ -237,18 +268,21 @@
             new QRCode(qrContainer, { text: docRef.id, width: 180, height: 180, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
 
             document.getElementById('displayName').innerText = name;
-            document.getElementById('displayTable').innerText = table;
+            document.getElementById('displayTable').innerText = autoTableNo;
 
-            btn.disabled = false; btn.innerText = "✅ ยืนยันการจอง";
+            btn.disabled = false; btn.innerText = "✅ จองสำเร็จ (กดจองต่อ)";
             setTimeout(() => { document.getElementById('ticketResult').scrollIntoView({behavior: "smooth"}); }, 300);
 
-        } catch (e) { console.error(e); alert("Error: " + e.message); btn.disabled = false; btn.innerText = "ลองใหม่"; }
+        } catch (e) {
+            console.error(e);
+            alert("Error: " + e.message);
+            btn.disabled = false; btn.innerText = "ลองใหม่อีกครั้ง";
+        }
     };
 
     window.resetForm = () => {
         document.getElementById('custName').value = '';
         document.getElementById('custPhone').value = '';
-        document.getElementById('tableNo').value = '';
         document.getElementById('paymentRef').value = '';
         document.getElementById('ticketResult').classList.add('hidden');
         document.getElementById('qrcodeDisplay').innerHTML = "";
@@ -326,15 +360,15 @@
 
     window.loadBookingsAdmin = async () => {
         const list = document.getElementById('adminList');
-        list.innerHTML = "<tr><td colspan='6' class='text-center'>⏳ กำลังโหลดข้อมูล...</td></tr>";
+        list.innerHTML = "<tr><td colspan='4' class='text-center'>⏳ กำลังโหลด...</td></tr>";
         
         try {
-            const q = query(collection(db, "bookings"), orderBy("createdAt", "desc"));
+            const q = query(collection(db, "bookings"), orderBy("table", "asc")); // เรียงตามเลขโต๊ะ จะได้เช็ค gap ง่ายๆ
             const snapshot = await getDocs(q);
             list.innerHTML = "";
             
             if(snapshot.empty) {
-                list.innerHTML = "<tr><td colspan='6' class='text-center'>- ไม่มีข้อมูลการจอง -</td></tr>";
+                list.innerHTML = "<tr><td colspan='4' class='text-center'>- ว่าง -</td></tr>";
                 return;
             }
 
@@ -343,20 +377,17 @@
                 const bookedTime = formatThaiDate(d.createdAt);
                 const checkInTime = formatThaiDate(d.checkInTime);
                 const statusBadge = d.status === 'used' 
-                    ? '<span class="badge bg-success">เข้าแล้ว</span>' 
-                    : '<span class="badge bg-warning text-dark">รอ</span>';
+                    ? `<span class="badge bg-success">เข้า ${checkInTime}</span>` 
+                    : `<span class="badge bg-warning text-dark">จอง ${bookedTime}</span>`;
                 const rowClass = d.status === 'used' ? 'table-active' : '';
 
                 list.innerHTML += `
                     <tr class="${rowClass}">
-                        <td class="fw-bold text-warning" style="font-size:1.2rem;">${d.table}</td>
+                        <td class="fw-bold text-warning" style="font-size:1.1rem;">${d.table}</td>
                         <td class="text-start">
-                            <div class="fw-bold">${d.name}</div>
-                            <small class="text-muted">${d.phone || '-'}</small><br>
-                            <small class="text-muted fst-italic">${d.paymentRef || ''}</small>
+                            <div>${d.name}</div>
+                            <small class="text-muted">${d.phone || ''}</small>
                         </td>
-                        <td><span class="badge-time">${bookedTime}</span></td>
-                        <td>${d.checkInTime ? `<span class="badge-checkin">${checkInTime}</span>` : '-'}</td>
                         <td>${statusBadge}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
@@ -366,10 +397,7 @@
                         </td>
                     </tr>`;
             });
-        } catch(e) {
-            console.error(e);
-            list.innerHTML = `<tr><td colspan='6' class='text-center text-danger'>Error: ${e.message}</td></tr>`;
-        }
+        } catch(e) { console.error(e); }
     };
     
     window.showQr = (id) => {
@@ -378,7 +406,12 @@
         qrModal.show();
     };
 
-    window.del = async (id) => { if(confirm("⚠️ ต้องการลบข้อมูลนี้ถาวร ใช่หรือไม่?")) { await deleteDoc(doc(db, "bookings", id)); loadBookingsAdmin(); }};
+    window.del = async (id) => { 
+        if(confirm("⚠️ คำเตือน: การลบจะทำให้เลขโต๊ะนี้ว่างลง\nระบบจะนำเลขนี้กลับมาจ่ายให้คนถัดไปทันที\n\nยืนยันการลบ?")) { 
+            await deleteDoc(doc(db, "bookings", id)); 
+            loadBookingsAdmin(); 
+        }
+    };
     
     window.del = window.del; window.showQr = window.showQr;
 </script>
