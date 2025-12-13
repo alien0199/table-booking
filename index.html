@@ -12,10 +12,26 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap');
 
-        body { font-family: 'Kanit', sans-serif; background-color: #050505; color: #fff; padding-bottom: 80px; }
-        .container { max-width: 450px; margin-top: 15px; }
+        body { font-family: 'Kanit', sans-serif; background-color: #050505; color: #fff; padding-bottom: 80px; position: relative; min-height: 100vh; }
+        .container { max-width: 450px; margin-top: 15px; padding-bottom: 40px; }
         .hidden { display: none !important; }
         
+        /* Footer ด้านล่างสุด */
+        .footer-brand {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            background: #000;
+            color: #ffeb3b;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-top: 1px solid #222;
+            z-index: 1000;
+        }
+
         /* การ์ดบัตรจอง */
         .ticket-card {
             background: linear-gradient(135deg, #6200ea 0%, #b388ff 100%);
@@ -37,8 +53,24 @@
         .table-badge { font-size: 48px; font-weight: 700; background: #ffeb3b; color: #000; padding: 0px 40px; border-radius: 15px; box-shadow: 0 5px 10px rgba(0,0,0,0.3); margin-top: 5px; display: inline-block; }
         .footer-note { margin-top: 20px; font-size: 14px; opacity: 0.9; font-weight: 300; }
 
-        .form-control { background: #222; border: 1px solid #444; color: #fff; border-radius: 12px; height: 50px; font-size: 1.1rem; text-align: center; }
-        .form-control:focus { background: #333; color: #fff; border-color: #6200ea; box-shadow: none; }
+        /* ปรับสี Text Input เป็นสีขาว */
+        .form-control, .form-select { 
+            background: #222; 
+            border: 1px solid #444; 
+            color: #fff !important; 
+            border-radius: 12px; 
+            height: 50px; 
+            font-size: 1.1rem; 
+            text-align: center; 
+        }
+        .form-control:focus, .form-select:focus { 
+            background: #333; 
+            color: #fff !important; 
+            border-color: #6200ea; 
+            box-shadow: none; 
+        }
+        .form-control::placeholder { color: #888; }
+        
         .btn-main { background: linear-gradient(90deg, #00c6ff, #0072ff); border: none; height: 55px; font-size: 1.2rem; font-weight: 700; color: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4); }
         .nav-pills .nav-link { background: #222; color: #aaa; border-radius: 10px; margin: 0 2px; }
         .nav-pills .nav-link.active { background: #6200ea; color: #fff; font-weight: bold; }
@@ -51,24 +83,11 @@
         .table-custom th { background-color: #333; color: #ffeb3b; }
         .table-custom td { vertical-align: middle; color: #ddd; }
 
-        /* สไตล์ปุ่มเลือกโซนแบบใหม่ */
-        .btn-check:checked + .btn-vip {
-            background-color: #ffc107; color: #000; border-color: #ffc107;
-            box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
-        }
-        .btn-vip {
-            border: 2px solid #ffc107; color: #ffc107; background: transparent;
-            transition: all 0.2s;
-        }
+        .btn-check:checked + .btn-vip { background-color: #ffc107; color: #000; border-color: #ffc107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
+        .btn-vip { border: 2px solid #ffc107; color: #ffc107; background: transparent; transition: all 0.2s; }
         
-        .btn-check:checked + .btn-vvip {
-            background-color: #d63384; color: #fff; border-color: #d63384;
-            box-shadow: 0 0 15px rgba(214, 51, 132, 0.5);
-        }
-        .btn-vvip {
-            border: 2px solid #d63384; color: #d63384; background: transparent;
-            transition: all 0.2s;
-        }
+        .btn-check:checked + .btn-vvip { background-color: #d63384; color: #fff; border-color: #d63384; box-shadow: 0 0 15px rgba(214, 51, 132, 0.5); }
+        .btn-vvip { border: 2px solid #d63384; color: #d63384; background: transparent; transition: all 0.2s; }
     </style>
 </head>
 <body>
@@ -91,23 +110,33 @@
                 <div class="card p-4 border-0 shadow mb-4" style="background: #151515; border-radius: 20px;">
                     
                     <div class="mb-4">
-                        <label class="text-white-50 small mb-2">เลือกชุดโต๊ะ (แตะเพื่อเลือก)</label>
+                        <label class="text-white-50 small mb-2">เลือกชุดโต๊ะ</label>
                         <div class="d-flex gap-2">
                             <input type="radio" class="btn-check" name="zoneOption" id="optVIP" value="VIP" checked>
-                            <label class="btn btn-vip w-50 py-3 fw-bold rounded-3" for="optVIP">
-                                🎫 VIP (ชุด 1)<br><small style="font-size:0.7rem; opacity:0.8;">เริ่ม VIP001</small>
-                            </label>
+                            <label class="btn btn-vip w-50 py-3 fw-bold rounded-3" for="optVIP">🎫 VIP (ชุด 1)</label>
 
                             <input type="radio" class="btn-check" name="zoneOption" id="optVVIP" value="VVIP">
-                            <label class="btn btn-vvip w-50 py-3 fw-bold rounded-3" for="optVVIP">
-                                👑 VVIP (ชุด 2)<br><small style="font-size:0.7rem; opacity:0.8;">เริ่ม VVIP001</small>
-                            </label>
+                            <label class="btn btn-vvip w-50 py-3 fw-bold rounded-3" for="optVVIP">👑 VVIP (ชุด 2)</label>
                         </div>
                     </div>
 
-                    <input type="text" id="custName" class="form-control mb-3" placeholder="ชื่อลูกค้า">
-                    <input type="tel" id="custPhone" class="form-control mb-3" placeholder="เบอร์โทร">
-                    <input type="text" id="paymentRef" class="form-control mb-4" placeholder="หมายเหตุ / ยอดเงิน">
+                    <div class="mb-3">
+                        <input type="text" id="custName" class="form-control" placeholder="ชื่อลูกค้า">
+                    </div>
+                    <div class="mb-3">
+                        <input type="tel" id="custPhone" class="form-control" placeholder="เบอร์โทร">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <select id="paymentMethod" class="form-select">
+                            <option value="เงินสด">💵 เงินสด</option>
+                            <option value="โอนเข้าบัญชี">🏦 โอนเข้าบัญชี</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <input type="text" id="paymentRef" class="form-control" placeholder="หมายเหตุอื่นๆ (ถ้ามี)">
+                    </div>
                     
                     <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100">✅ รันคิวและยืนยัน</button>
                 </div>
@@ -168,7 +197,8 @@
                         <thead>
                             <tr>
                                 <th>โต๊ะ</th>
-                                <th>ชื่อลูกค้า</th>
+                                <th>ข้อมูลลูกค้า</th>
+                                <th>การชำระ</th>
                                 <th>สถานะ</th>
                                 <th>จัดการ</th>
                             </tr>
@@ -179,6 +209,10 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="footer-brand">
+    โพ-ออก เฟสติวัล
 </div>
 
 <div class="modal fade" id="qrModal" tabindex="-1">
@@ -250,14 +284,14 @@
         return prefix + String(nextNum).padStart(3, '0');
     }
 
-    // --- 1. สร้างการจอง (แก้ให้รับค่าจากปุ่ม Radio) ---
+    // --- 1. สร้างการจอง ---
     window.addBooking = async () => {
         const btn = document.getElementById('btnSave');
-        // ใช้ querySelector หาค่า Radio ที่ถูกเลือก
         const zonePrefix = document.querySelector('input[name="zoneOption"]:checked').value;
         const name = document.getElementById('custName').value;
         const phone = document.getElementById('custPhone').value;
-        const payRef = document.getElementById('paymentRef').value;
+        const payMethod = document.getElementById('paymentMethod').value; 
+        const payRef = document.getElementById('paymentRef').value; 
 
         if(!name) return alert("❌ กรุณาใส่ชื่อลูกค้า");
         
@@ -266,7 +300,7 @@
         try {
             const autoTableNo = await getNextQueue(zonePrefix);
 
-            if(!confirm(`ระบบจัดคิวให้ที่โต๊ะ: ${autoTableNo}\nยืนยันการจองไหมครับ?`)) {
+            if(!confirm(`ระบบจัดคิวให้ที่โต๊ะ: ${autoTableNo}\nวิธีชำระ: ${payMethod}\nยืนยันการจองไหมครับ?`)) {
                 btn.disabled = false; btn.innerText = "✅ รันคิวและยืนยัน";
                 return;
             }
@@ -274,7 +308,9 @@
             btn.innerText = "⏳ กำลังบันทึก...";
             
             const docRef = await addDoc(collection(db, "bookings"), {
-                name, phone, table: autoTableNo, paymentRef: payRef, status: "booked", createdAt: serverTimestamp()
+                name, phone, table: autoTableNo, 
+                paymentMethod: payMethod, paymentRef: payRef, 
+                status: "booked", createdAt: serverTimestamp()
             });
 
             document.getElementById('ticketResult').classList.remove('hidden');
@@ -318,7 +354,6 @@
             const isUsed = d.status === 'used';
             const statusClass = isUsed ? 'status-used' : 'status-booked';
             const statusText = isUsed ? '🟢 มาแล้ว' : '🟡 จอง';
-            // เพิ่มสีแยกโซนในการ์ดสถานะด้วย
             const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
             
             display.innerHTML += `
@@ -377,7 +412,7 @@
 
     window.loadBookingsAdmin = async () => {
         const list = document.getElementById('adminList');
-        list.innerHTML = "<tr><td colspan='4' class='text-center'>⏳ กำลังโหลด...</td></tr>";
+        list.innerHTML = "<tr><td colspan='5' class='text-center'>⏳ กำลังโหลด...</td></tr>";
         
         try {
             const q = query(collection(db, "bookings"), orderBy("table", "asc"));
@@ -385,7 +420,7 @@
             list.innerHTML = "";
             
             if(snapshot.empty) {
-                list.innerHTML = "<tr><td colspan='4' class='text-center'>- ว่าง -</td></tr>";
+                list.innerHTML = "<tr><td colspan='5' class='text-center'>- ว่าง -</td></tr>";
                 return;
             }
 
@@ -399,6 +434,11 @@
                 const rowClass = d.status === 'used' ? 'table-active' : '';
                 const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
 
+                const payInfo = `
+                    <span class="badge bg-info text-dark">${d.paymentMethod || 'ไม่ระบุ'}</span><br>
+                    <small class="text-muted fst-italic">${d.paymentRef || ''}</small>
+                `;
+
                 list.innerHTML += `
                     <tr class="${rowClass}">
                         <td class="fw-bold" style="font-size:1.1rem; color:${zoneColor}">${d.table}</td>
@@ -406,6 +446,7 @@
                             <div>${d.name}</div>
                             <small class="text-muted">${d.phone || ''}</small>
                         </td>
+                        <td>${payInfo}</td>
                         <td>${statusBadge}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
@@ -425,7 +466,7 @@
     };
 
     window.del = async (id) => { 
-        if(confirm("⚠️ คำเตือน: การลบจะทำให้เลขโต๊ะนี้ว่างลง\nระบบจะนำเลขนี้กลับมาจ่ายให้คนถัดไปทันที\n\nยืนยันการลบ?")) { 
+        if(confirm("⚠️ ยืนยันการลบ?")) { 
             await deleteDoc(doc(db, "bookings", id)); 
             loadBookingsAdmin(); 
         }
