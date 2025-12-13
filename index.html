@@ -106,16 +106,12 @@
                     <div class="mb-3"><input type="text" id="custName" class="form-control" placeholder="ชื่อลูกค้า"></div>
                     <div class="mb-3"><input type="tel" id="custPhone" class="form-control" placeholder="เบอร์โทร"></div>
                     <div class="mb-3"><input type="text" id="paymentRef" class="form-control" placeholder="หมายเหตุอื่นๆ (ถ้ามี)"></div>
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label class="text-white-50 small mb-1">ช่องทางการชำระเงิน</label>
-                        <select id="paymentMethod" class="form-select" onchange="toggleSlipInput()">
+                        <select id="paymentMethod" class="form-select">
                             <option value="เงินสด">💵 เงินสด</option>
                             <option value="โอนเข้าบัญชี">🏦 โอนเข้าบัญชี</option>
                         </select>
-                    </div>
-                    <div id="slipUploadContainer" class="mb-4 hidden">
-                        <label class="text-warning small mb-1">แนบสลิปโอนเงิน (ถ้ามี)</label>
-                        <input type="file" id="slipFile" class="form-control" accept="image/*">
                     </div>
                     <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100">✅ รันคิวและยืนยัน</button>
                 </div>
@@ -209,20 +205,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="slipModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title text-dark">หลักฐานการโอน</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body text-center">
-        <img id="slipImagePreview" src="" class="img-fluid rounded shadow">
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="modal fade" id="qrModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-dark text-white border-secondary">
@@ -241,6 +223,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    // ยังคง import ไว้เพื่อความชัวร์ แต่ไม่ได้ใช้งานแล้ว
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
     const firebaseConfig = {
@@ -256,11 +239,10 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
-    const storage = getStorage(app);
+    // const storage = getStorage(app); // ไม่ได้ใช้แล้ว
     
     let html5QrcodeScanner = null;
     let qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
-    let slipModal = new bootstrap.Modal(document.getElementById('slipModal'));
     let currentScanDoc = null;
     let currentScanData = null;
 
@@ -290,12 +272,7 @@
         return prefix + String(nextNum).padStart(3, '0');
     }
 
-    window.toggleSlipInput = () => {
-        const method = document.getElementById('paymentMethod').value;
-        const slipDiv = document.getElementById('slipUploadContainer');
-        if(method === 'โอนเข้าบัญชี') slipDiv.classList.remove('hidden');
-        else slipDiv.classList.add('hidden');
-    }
+    // ลบฟังก์ชัน toggleSlipInput ออก เพราะไม่ใช้แล้ว
 
     window.addBooking = async () => {
         const btn = document.getElementById('btnSave');
@@ -304,30 +281,21 @@
         const phone = document.getElementById('custPhone').value;
         const payMethod = document.getElementById('paymentMethod').value; 
         const payRef = document.getElementById('paymentRef').value; 
-        const slipFile = document.getElementById('slipFile').files[0];
+        // ลบตัวแปร slipFile ออก
 
         if(!name) return alert("❌ กรุณาใส่ชื่อลูกค้า");
-        if(payMethod === 'โอนเข้าบัญชี' && !slipFile) {
-            if(!confirm("⚠️ คุณยังไม่ได้แนบสลิป ยืนยันจะจองไหม?")) return;
-        }
-
-        btn.disabled = true; btn.innerText = "⏳ กำลังประมวลผล...";
+        
+        btn.disabled = true; btn.innerText = "⏳ กำลังบันทึกข้อมูล...";
 
         try {
             const autoTableNo = await getNextQueue(zonePrefix);
-            let slipUrl = "";
-            if (slipFile) {
-                btn.innerText = "⏳ กำลังอัปโหลดสลิป...";
-                const storageRef = ref(storage, 'slips/' + Date.now() + '_' + slipFile.name);
-                await uploadBytes(storageRef, slipFile);
-                slipUrl = await getDownloadURL(storageRef);
-            }
-
-            btn.innerText = "⏳ กำลังบันทึกข้อมูล...";
+            
+            // ลบโค้ดส่วนอัปโหลดรูป (uploadBytes) ออกทั้งหมด
             
             const docRef = await addDoc(collection(db, "bookings"), {
                 name, phone, table: autoTableNo, 
-                paymentMethod: payMethod, paymentRef: payRef, slipUrl: slipUrl,
+                paymentMethod: payMethod, paymentRef: payRef, 
+                // ไม่ส่ง slipUrl ไปแล้ว
                 status: "booked", pax: 0, maxPax: 4, 
                 createdAt: serverTimestamp()
             });
@@ -342,7 +310,7 @@
             setTimeout(() => { document.getElementById('ticketResult').scrollIntoView({behavior: "smooth"}); }, 300);
         } catch (e) { 
             console.error(e); 
-            alert("Error: " + e.message + "\n(เช็คว่าเปิด Storage ใน Firebase Console หรือยัง?)"); 
+            alert("Error: " + e.message); 
             btn.disabled = false; btn.innerText = "ลองใหม่อีกครั้ง"; 
         }
     };
@@ -351,7 +319,7 @@
         document.getElementById('custName').value = '';
         document.getElementById('custPhone').value = '';
         document.getElementById('paymentRef').value = '';
-        document.getElementById('slipFile').value = '';
+        // document.getElementById('slipFile').value = ''; // ลบออก
         document.getElementById('ticketResult').classList.add('hidden');
         document.getElementById('qrcodeDisplay').innerHTML = "";
     };
@@ -381,7 +349,6 @@
                 statusText = `🟠 เข้า ${currentPax}/${maxPax}`;
             }
             
-            // เพิ่ม onclick เพื่อเปิดบัตรจอง
             display.innerHTML += `
                 <div class="col-4 col-sm-4" onclick="openTicketModal('${doc.id}', '${d.name}', '${d.table}')">
                     <div class="status-card p-2 text-center ${statusClass}">
@@ -393,7 +360,6 @@
         });
     };
 
-    // --- ฟังก์ชันเปิดหน้าบัตรจองจากหน้าสถานะ ---
     window.openTicketModal = (docId, name, table) => {
         document.getElementById('modalDisplayName').innerText = name;
         document.getElementById('modalDisplayTable').innerText = table;
@@ -526,12 +492,8 @@
                 const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
                 const payBadge = d.paymentMethod === 'เงินสด' ? '<span class="badge bg-success">💵 เงินสด</span>' : '<span class="badge bg-primary">🏦 โอน</span>';
                 
-                let slipBtn = '';
-                if(d.slipUrl) {
-                    slipBtn = `<br><button class="btn btn-sm btn-info mt-1" onclick="showSlip('${d.slipUrl}')">📄 ดูสลิป</button>`;
-                }
-
-                const payInfo = `${payBadge}${slipBtn}<br><small class="text-muted fst-italic">${d.paymentRef || '-'}</small>`;
+                // ลบส่วนแสดงปุ่มกดดูสลิปออก
+                const payInfo = `${payBadge}<br><small class="text-muted fst-italic">${d.paymentRef || '-'}</small>`;
 
                 const currentPax = d.pax || 0;
                 const maxPax = d.maxPax || 4;
@@ -566,11 +528,6 @@
         qrModal.show();
     };
 
-    window.showSlip = (url) => {
-        document.getElementById('slipImagePreview').src = url;
-        slipModal.show();
-    };
-
     window.del = async (id) => { 
         if(confirm("⚠️ ยืนยันการลบ?")) { 
             await deleteDoc(doc(db, "bookings", id)); 
@@ -578,7 +535,7 @@
         }
     };
     
-    window.del = window.del; window.showQr = window.showQr; window.showSlip = window.showSlip;
+    window.del = window.del; window.showQr = window.showQr;
 </script>
 
 </body>
