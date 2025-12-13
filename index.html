@@ -16,88 +16,65 @@
         .container { max-width: 450px; margin-top: 15px; padding-bottom: 20px; }
         .hidden { display: none !important; }
         
-        /* สไตล์หน้าต่างเด้ง (Popup) แบบทำเอง */
-        .custom-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); /* พื้นหลังมืดสนิท */
-            z-index: 9999;
-            display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-        .custom-modal-box {
-            background: #fff;
-            color: #000;
-            width: 90%;
-            max-width: 400px;
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(255,255,255,0.2);
-            border: 5px solid #ffeb3b; /* ขอบสีเหลืองเด่นๆ */
-        }
-        .modal-title { font-size: 2rem; font-weight: 800; color: #000; margin-bottom: 10px; }
-        .modal-text { font-size: 1.3rem; font-weight: 500; margin-bottom: 15px; line-height: 1.4; }
-        .modal-highlight { color: #d63384; font-size: 1.5rem; font-weight: 800; }
-        
-        /* ช่องกรอกจำนวนคน ใหญ่ๆ */
-        .modal-input {
-            width: 100%;
-            height: 70px;
-            font-size: 3rem;
-            text-align: center;
-            font-weight: bold;
-            border: 3px solid #000;
-            border-radius: 15px;
-            margin: 10px 0 20px 0;
-            background: #f8f9fa;
-            color: #000;
-        }
-        
-        /* ปุ่มใน Modal ใหญ่ๆ */
-        .modal-btn {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            border-radius: 12px;
-            border: none;
-            margin-bottom: 10px;
-        }
-        .btn-confirm { background: #198754; color: #fff; }
-        .btn-cancel { background: #dc3545; color: #fff; }
-
-        /* UI เดิม */
+        /* การ์ดบัตรจอง */
         .ticket-card {
             background: linear-gradient(135deg, #6200ea 0%, #b388ff 100%);
-            border-radius: 25px; padding: 40px 20px; text-align: center;
-            box-shadow: 0 10px 30px rgba(98, 0, 234, 0.5); border: 4px solid #fff;
+            border-radius: 25px;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(98, 0, 234, 0.5);
+            border: 4px solid #fff;
+            position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             margin: 0 auto; max-width: 350px;
         }
-        .ticket-header { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.6); padding: 5px 25px; border-radius: 50px; font-size: 16px; margin-bottom: 25px; }
-        .qr-bg { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 20px; width: 210px; height: 210px; display: flex; align-items: center; justify-content: center; }
+        .event-title { font-size: 28px; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin-bottom: 5px; line-height: 1.1; }
+        .event-sub { font-size: 24px; color: #ffeb3b; font-weight: 700; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); margin-bottom: 20px; }
+        .ticket-header { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.6); padding: 5px 25px; border-radius: 50px; font-size: 16px; margin-bottom: 25px; backdrop-filter: blur(5px); }
+        
+        /* ปรับปรุง QR BG ให้ชัวร์ว่าอยู่ตรงกลาง */
+        .qr-bg { 
+            background: #fff; 
+            padding: 15px; 
+            border-radius: 15px; 
+            /* ใช้ margin auto เพื่อจัดกึ่งกลางแนวนอน และเว้นด้านล่าง 20px */
+            margin: 0 auto 20px auto; 
+            width: 210px; 
+            height: 210px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
         #qrcodeDisplay img { display: block; margin: 0 auto; }
-        .cust-name { font-size: 26px; font-weight: 700; margin-bottom: 5px; }
+        .cust-name { font-size: 26px; font-weight: 700; margin-bottom: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
         .table-badge { font-size: 48px; font-weight: 700; background: #ffeb3b; color: #000; padding: 0px 40px; border-radius: 15px; box-shadow: 0 5px 10px rgba(0,0,0,0.3); margin-top: 5px; display: inline-block; }
-        
+        .footer-note { margin-top: 20px; font-size: 14px; opacity: 0.9; font-weight: 300; }
+
+        /* ปรับสี Text Input เป็นสีขาว */
         .form-control, .form-select { background: #222; border: 1px solid #444; color: #fff !important; border-radius: 12px; height: 50px; font-size: 1.1rem; text-align: center; }
-        .btn-main { background: linear-gradient(90deg, #00c6ff, #0072ff); border: none; height: 55px; font-size: 1.2rem; font-weight: 700; color: #fff; border-radius: 12px; }
+        .form-control:focus, .form-select:focus { background: #333; color: #fff !important; border-color: #6200ea; box-shadow: none; }
+        .form-control::placeholder { color: #888; }
         
+        .btn-main { background: linear-gradient(90deg, #00c6ff, #0072ff); border: none; height: 55px; font-size: 1.2rem; font-weight: 700; color: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4); }
         .nav-pills .nav-link { background: #222; color: #aaa; border-radius: 10px; margin: 0 2px; }
         .nav-pills .nav-link.active { background: #6200ea; color: #fff; font-weight: bold; }
         
-        .status-card { background: #222; border-radius: 12px; border: 1px solid #333; }
-        .status-booked { border-bottom: 4px solid #ffc107; }
-        .status-partial { border-bottom: 4px solid #fd7e14; }
-        .status-full { border-bottom: 4px solid #2ecc71; opacity: 0.7; }
+        /* สถานะในการ์ด */
+        .status-card { background: #222; border-radius: 12px; border: 1px solid #333; transition: all 0.2s; }
+        .status-booked { border-bottom: 4px solid #ffc107; } /* รอ */
+        .status-partial { border-bottom: 4px solid #fd7e14; } /* เข้าบางส่วน */
+        .status-full { border-bottom: 4px solid #2ecc71; opacity: 0.7; } /* ครบ */
         
-        .admin-table-container { overflow-x: auto; background: white; border-radius: 10px; }
+        /* ตาราง Admin */
+        .admin-table-container { overflow-x: auto; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .table-custom { background-color: #ffffff; color: #000000; font-size: 0.9rem; width: 100%; white-space: nowrap; margin-bottom: 0; }
         .table-custom th { background-color: #212529; color: #ffeb3b; padding: 15px; font-weight: 600; }
         .table-custom td { vertical-align: middle; color: #000000; padding: 12px 15px; border-bottom: 1px solid #dee2e6; }
+        .table-custom .text-muted { color: #555 !important; }
 
-        .btn-check:checked + .btn-vip { background-color: #ffc107; color: #000; border-color: #ffc107; }
+        .btn-check:checked + .btn-vip { background-color: #ffc107; color: #000; border-color: #ffc107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
         .btn-vip { border: 2px solid #ffc107; color: #ffc107; background: transparent; transition: all 0.2s; }
-        .btn-check:checked + .btn-vvip { background-color: #d63384; color: #fff; border-color: #d63384; }
+        .btn-check:checked + .btn-vvip { background-color: #d63384; color: #fff; border-color: #d63384; box-shadow: 0 0 15px rgba(214, 51, 132, 0.5); }
         .btn-vvip { border: 2px solid #d63384; color: #d63384; background: transparent; transition: all 0.2s; }
     </style>
 </head>
@@ -120,18 +97,27 @@
         <div class="tab-pane fade show active" id="create">
             <div class="user-container">
                 <div class="card p-4 border-0 shadow mb-4" style="background: #151515; border-radius: 20px;">
+                    
                     <div class="mb-4">
                         <label class="text-white-50 small mb-2">เลือกชุดโต๊ะ</label>
                         <div class="d-flex gap-2">
                             <input type="radio" class="btn-check" name="zoneOption" id="optVIP" value="VIP" checked>
                             <label class="btn btn-vip w-50 py-3 fw-bold rounded-3" for="optVIP">🎫 VIP (ชุด 1)</label>
+
                             <input type="radio" class="btn-check" name="zoneOption" id="optVVIP" value="VVIP">
                             <label class="btn btn-vvip w-50 py-3 fw-bold rounded-3" for="optVVIP">👑 VVIP (ชุด 2)</label>
                         </div>
                     </div>
-                    <div class="mb-3"><input type="text" id="custName" class="form-control" placeholder="ชื่อลูกค้า"></div>
-                    <div class="mb-3"><input type="tel" id="custPhone" class="form-control" placeholder="เบอร์โทร"></div>
-                    <div class="mb-3"><input type="text" id="paymentRef" class="form-control" placeholder="หมายเหตุอื่นๆ (ถ้ามี)"></div>
+
+                    <div class="mb-3">
+                        <input type="text" id="custName" class="form-control" placeholder="ชื่อลูกค้า">
+                    </div>
+                    <div class="mb-3">
+                        <input type="tel" id="custPhone" class="form-control" placeholder="เบอร์โทร">
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" id="paymentRef" class="form-control" placeholder="หมายเหตุอื่นๆ (ถ้ามี)">
+                    </div>
                     <div class="mb-4">
                         <label class="text-white-50 small mb-1">ช่องทางการชำระเงิน</label>
                         <select id="paymentMethod" class="form-select">
@@ -139,8 +125,10 @@
                             <option value="โอนเข้าบัญชี">🏦 โอนเข้าบัญชี</option>
                         </select>
                     </div>
+                    
                     <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100">✅ รันคิวและยืนยัน</button>
                 </div>
+                
                 <div id="ticketResult" class="hidden animate__animated animate__fadeInUp">
                     <p class="text-center text-success mb-2">🎉 จองสำเร็จ!</p>
                     <div class="ticket-card" id="finalTicket">
@@ -184,34 +172,29 @@
                     <button onclick="login()" class="btn btn-light w-100 py-3 rounded-pill fw-bold">เข้าสู่ระบบ</button>
                 </div>
             </div>
+
             <div id="adminContent" class="hidden">
                 <div class="d-flex justify-content-between mb-3 text-white align-items-center">
                     <span class="h4">จัดการข้อมูล (Admin)</span>
                     <button onclick="logout()" class="btn btn-sm btn-danger">ออกจากระบบ</button>
                 </div>
                 <button onclick="loadBookingsAdmin()" class="btn btn-info w-100 mb-3"><i class="bi bi-arrow-clockwise"></i> โหลดข้อมูลล่าสุด</button>
+                
                 <div class="admin-table-container">
                     <table class="table table-custom">
-                        <thead><tr><th>โต๊ะ</th><th>ลูกค้า</th><th>📅 จองเมื่อ</th><th>การชำระ</th><th>จำนวนเข้า</th><th>จัดการ</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>โต๊ะ</th>
+                                <th>ลูกค้า</th>
+                                <th>📅 จองเมื่อ</th>
+                                <th>ชำระ/เข้า</th> <th>จัดการ</th>
+                            </tr>
+                        </thead>
                         <tbody id="adminList"></tbody>
                     </table>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<div id="scanModal" class="custom-modal-overlay hidden">
-    <div class="custom-modal-box">
-        <div class="modal-title">📥 เช็คอิน</div>
-        <div id="modalInfo" class="modal-text text-start">
-            </div>
-        
-        <label class="d-block text-start fw-bold mt-2" style="font-size:1.2rem;">ระบุจำนวนที่เข้า (คน):</label>
-        <input type="number" id="modalPaxInput" class="modal-input" value="1" min="1">
-        
-        <button onclick="confirmScan()" class="btn modal-btn btn-confirm">✅ ยืนยัน</button>
-        <button onclick="closeScanModal()" class="btn modal-btn btn-cancel">❌ ยกเลิก</button>
     </div>
 </div>
 
@@ -249,10 +232,6 @@
     const auth = getAuth(app);
     let html5QrcodeScanner = null;
     let qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
-    
-    // ตัวแปรเก็บข้อมูลชั่วคราวตอนสแกน
-    let currentScanDoc = null;
-    let currentScanData = null;
 
     function formatThaiDate(timestamp) {
         if(!timestamp) return "-";
@@ -275,11 +254,13 @@
         existingNumbers.sort((a, b) => a - b);
         let nextNum = 1;
         for (let num of existingNumbers) {
-            if (num === nextNum) nextNum++; else if (num > nextNum) break; 
+            if (num === nextNum) nextNum++;
+            else if (num > nextNum) break; 
         }
         return prefix + String(nextNum).padStart(3, '0');
     }
 
+    // --- 1. สร้างการจอง ---
     window.addBooking = async () => {
         const btn = document.getElementById('btnSave');
         const zonePrefix = document.querySelector('input[name="zoneOption"]:checked').value;
@@ -299,6 +280,7 @@
             }
             btn.innerText = "⏳ กำลังบันทึก...";
             
+            // เพิ่ม field pax (จำนวนที่เข้า), maxPax (โควต้า)
             const docRef = await addDoc(collection(db, "bookings"), {
                 name, phone, table: autoTableNo, 
                 paymentMethod: payMethod, paymentRef: payRef, 
@@ -325,6 +307,7 @@
         document.getElementById('qrcodeDisplay').innerHTML = "";
     };
 
+    // --- 2. โหลดสถานะโต๊ะ (แสดงจำนวน) ---
     window.loadTableStatus = async () => {
         const display = document.getElementById('statusList');
         display.innerHTML = "<div class='text-center text-white'>⏳ กำลังโหลด...</div>";
@@ -339,7 +322,7 @@
             const currentPax = d.pax || 0;
             const maxPax = d.maxPax || 4;
             let statusClass = 'status-booked';
-            let statusText = `🟡 รอ (${currentPax}/${maxPax})`;
+            let statusText = `🟡 รอ (0/${maxPax})`;
             let zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
 
             if (currentPax >= maxPax) {
@@ -361,6 +344,7 @@
         });
     };
 
+    // --- 3. สแกน (ระบบนับจำนวนคน) ---
     window.startScanner = () => {
         document.getElementById('stopCamBtn').classList.remove('hidden');
         html5QrcodeScanner = new Html5Qrcode("reader");
@@ -373,86 +357,74 @@
         });
     };
     
-    // --- ฟังก์ชันเมื่อสแกนเจอ QR ---
+    // ฟังก์ชันสแกนและถามจำนวนคน
     const onScanSuccess = async (decodedText) => {
-        html5QrcodeScanner.pause(); // หยุดกล้อง
+        html5QrcodeScanner.pause(); // หยุดกล้องชั่วคราว
         const resDiv = document.getElementById('scanResult');
-        resDiv.innerHTML = "⏳ กำลังดึงข้อมูล...";
+        resDiv.innerHTML = "⏳ ตรวจสอบข้อมูล...";
         
         try {
             const docRef = doc(db, "bookings", decodedText);
             const snap = await getDoc(docRef);
             
             if (snap.exists()) {
-                currentScanDoc = docRef;
-                currentScanData = snap.data();
-                const d = currentScanData;
-                const currentPax = d.pax || 0;
-                const maxPax = d.maxPax || 4;
-                const remaining = maxPax - currentPax;
+                const d = snap.data();
+                const currentPax = d.pax || 0; // คนที่เข้าแล้ว
+                const maxPax = d.maxPax || 4; // โควต้าเต็ม
+                const remaining = maxPax - currentPax; // เหลือ
 
+                // 1. ถ้าเต็มแล้ว
                 if (remaining <= 0) {
-                    alert(`❌ โต๊ะ ${d.table} เข้าครบ ${maxPax} คนแล้ว!`);
-                    resDiv.innerHTML = "<h3 class='text-danger'>❌ เต็มแล้ว</h3>";
-                    setTimeout(() => html5QrcodeScanner.resume(), 2000);
+                    resDiv.innerHTML = `<h3 class='text-danger fw-bold'>❌ เต็มแล้ว!</h3>เข้าครบ ${maxPax} คนแล้ว`;
+                    alert("❌ สิทธิ์โต๊ะนี้เต็มแล้วครับ (เข้าครบ 4 คนแล้ว)");
                 } else {
-                    // เปิด Popup (Custom Modal)
-                    document.getElementById('modalInfo').innerHTML = `
-                        โต๊ะ: <span class="modal-highlight">${d.table}</span><br>
-                        ชื่อ: ${d.name}<br>
-                        เข้าแล้ว: ${currentPax}/${maxPax}<br>
-                        <span style="color:#d63384">เหลือโควต้า: ${remaining} คน</span>
-                    `;
-                    document.getElementById('modalPaxInput').value = 1;
-                    document.getElementById('modalPaxInput').max = remaining;
-                    document.getElementById('scanModal').classList.remove('hidden');
+                    // 2. ถ้ายังไม่เต็ม -> เด้ง Popup ถามจำนวน
+                    let enterAmount = prompt(`
+🎫 โต๊ะ: ${d.table} (คุณ ${d.name})
+✅ เข้าแล้ว: ${currentPax}/${maxPax} คน
+⚠️ เหลือโควต้า: ${remaining} คน
+
+👇 ระบุจำนวนคนที่เข้าตอนนี้ (1-${remaining}):
+                    `, "1");
+
+                    let amount = parseInt(enterAmount);
+
+                    // ตรวจสอบค่าที่กรอก
+                    if (!isNaN(amount) && amount > 0 && amount <= remaining) {
+                        const newPax = currentPax + amount;
+                        let newStatus = newPax >= maxPax ? 'used' : 'active'; // ถ้าครบเปลี่ยนเป็น used, ถ้ายังไม่ครบเป็น active
+
+                        await updateDoc(docRef, { 
+                            pax: newPax, 
+                            status: newStatus,
+                            checkInTime: serverTimestamp() 
+                        });
+                        
+                        resDiv.innerHTML = `<h3 class='text-success fw-bold'>✅ บันทึกสำเร็จ!</h3>เข้าเพิ่ม ${amount} คน<br>รวมเป็น ${newPax}/${maxPax}`;
+                        alert(`✅ บันทึกเรียบร้อย!\nเข้าเพิ่ม: ${amount} คน\nยอดรวม: ${newPax}/${maxPax} คน`);
+                    
+                    } else if (enterAmount !== null) {
+                        // กรอกผิด
+                        alert(`❌ กรุณากรอกเลขให้ถูกต้อง (ไม่เกิน ${remaining} คน)`);
+                        resDiv.innerHTML = "<h4 class='text-warning'>ระบุจำนวนผิด กรุณาสแกนใหม่</h4>";
+                    } else {
+                        // กด Cancel
+                        resDiv.innerHTML = "ยกเลิกรายการ";
+                    }
                 }
             } else { 
-                resDiv.innerHTML = `<h3 class='text-warning fw-bold'>⚠️ ไม่พบข้อมูล</h3>`; 
-                setTimeout(() => html5QrcodeScanner.resume(), 2000);
+                resDiv.innerHTML = `<h3 class='text-warning fw-bold'>⚠️ ไม่พบข้อมูลการจอง</h3>`; 
             }
         } catch (e) { 
             console.error(e);
-            resDiv.innerHTML = "Error: " + e.message;
-            setTimeout(() => html5QrcodeScanner.resume(), 2000);
+            resDiv.innerHTML = "Error: " + e.message; 
         }
+        
+        // เริ่มกล้องใหม่หลังทำรายการเสร็จ
+        setTimeout(() => html5QrcodeScanner.resume(), 1000);
     };
 
-    // --- ฟังก์ชันกดยืนยันใน Popup ---
-    window.confirmModal = async () => {
-        const amount = parseInt(document.getElementById('modalPaxInput').value);
-        const currentPax = currentScanData.pax || 0;
-        const maxPax = currentScanData.maxPax || 4;
-        const remaining = maxPax - currentPax;
-
-        if (amount > 0 && amount <= remaining) {
-            const newPax = currentPax + amount;
-            await updateDoc(currentScanDoc, { 
-                pax: newPax, 
-                status: newPax >= maxPax ? 'used' : 'active',
-                checkInTime: serverTimestamp() 
-            });
-            
-            document.getElementById('scanModal').classList.add('hidden');
-            document.getElementById('scanResult').innerHTML = `<h3 class='text-success fw-bold'>✅ บันทึกแล้ว!</h3>เข้า ${amount} คน (รวม ${newPax}/${maxPax})`;
-            
-            setTimeout(() => html5QrcodeScanner.resume(), 2000); // เริ่มสแกนต่อ
-        } else {
-            alert(`กรุณาใส่จำนวนไม่เกิน ${remaining} คน`);
-        }
-    };
-    
-    // --- ฟังก์ชันยกเลิกใน Popup ---
-    window.closeScanModal = () => {
-        document.getElementById('scanModal').classList.add('hidden');
-        document.getElementById('scanResult').innerHTML = "พร้อมสแกน...";
-        html5QrcodeScanner.resume();
-    };
-    
-    // Bind global functions
-    window.confirmScan = window.confirmModal;
-    window.closeScanModal = window.closeScanModal;
-
+    // --- 4. Admin ---
     window.login = () => {
         signInWithEmailAndPassword(auth, document.getElementById('adminEmail').value, document.getElementById('adminPass').value)
             .catch((e) => alert("Login Failed: " + e.message));
@@ -480,17 +452,20 @@
             snapshot.forEach((doc) => {
                 const d = doc.data();
                 const bookedTime = formatThaiDate(d.createdAt);
+                const rowClass = d.status === 'used' ? 'table-active' : '';
                 const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
                 const payBadge = d.paymentMethod === 'เงินสด' ? '<span class="badge bg-success">💵 เงินสด</span>' : '<span class="badge bg-primary">🏦 โอน</span>';
                 
+                // คำนวณสถานะเข้างาน
                 const currentPax = d.pax || 0;
                 const maxPax = d.maxPax || 4;
                 let paxBadge = `<span class="badge bg-warning text-dark">รอ (${currentPax}/${maxPax})</span>`;
-                if(currentPax >= maxPax) paxBadge = `<span class="badge bg-success">ครบ (${currentPax}/${maxPax})</span>`;
-                else if(currentPax > 0) paxBadge = `<span class="badge bg-info text-dark">บางส่วน (${currentPax}/${maxPax})</span>`;
+                
+                if(currentPax >= maxPax) paxBadge = `<span class="badge bg-success">✅ ครบ (${currentPax}/${maxPax})</span>`;
+                else if(currentPax > 0) paxBadge = `<span class="badge bg-info text-dark">🟠 มาบางส่วน (${currentPax}/${maxPax})</span>`;
 
                 list.innerHTML += `
-                    <tr>
+                    <tr class="${rowClass}">
                         <td class="fw-bold" style="font-size:1.1rem; color:${zoneColor}">${d.table}</td>
                         <td class="text-start text-dark">
                             <div class="fw-bold">${d.name}</div>
