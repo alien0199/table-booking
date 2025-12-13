@@ -83,6 +83,7 @@
         .table-custom th { background-color: #333; color: #ffeb3b; }
         .table-custom td { vertical-align: middle; color: #ddd; }
 
+        /* สไตล์ปุ่มเลือกโซน */
         .btn-check:checked + .btn-vip { background-color: #ffc107; color: #000; border-color: #ffc107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
         .btn-vip { border: 2px solid #ffc107; color: #ffc107; background: transparent; transition: all 0.2s; }
         
@@ -291,8 +292,8 @@
         const zonePrefix = document.querySelector('input[name="zoneOption"]:checked').value;
         const name = document.getElementById('custName').value;
         const phone = document.getElementById('custPhone').value;
-        const payMethod = document.getElementById('paymentMethod').value; // วิธีชำระ
-        const payRef = document.getElementById('paymentRef').value; // หมายเหตุ
+        const payMethod = document.getElementById('paymentMethod').value; 
+        const payRef = document.getElementById('paymentRef').value; 
 
         if(!name) return alert("❌ กรุณาใส่ชื่อลูกค้า");
         
@@ -435,7 +436,6 @@
                 const rowClass = d.status === 'used' ? 'table-active' : '';
                 const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
 
-                // แสดงผลการชำระเงินในตารางแอดมิน
                 const payBadge = d.paymentMethod === 'เงินสด' 
                     ? '<span class="badge bg-success">💵 เงินสด</span>' 
                     : '<span class="badge bg-primary">🏦 โอน</span>';
