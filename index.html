@@ -38,65 +38,29 @@
         .footer-note { margin-top: 20px; font-size: 14px; opacity: 0.9; font-weight: 300; }
 
         /* ปรับสี Text Input เป็นสีขาว */
-        .form-control, .form-select { 
-            background: #222; 
-            border: 1px solid #444; 
-            color: #fff !important; 
-            border-radius: 12px; 
-            height: 50px; 
-            font-size: 1.1rem; 
-            text-align: center; 
-        }
-        .form-control:focus, .form-select:focus { 
-            background: #333; 
-            color: #fff !important; 
-            border-color: #6200ea; 
-            box-shadow: none; 
-        }
+        .form-control, .form-select { background: #222; border: 1px solid #444; color: #fff !important; border-radius: 12px; height: 50px; font-size: 1.1rem; text-align: center; }
+        .form-control:focus, .form-select:focus { background: #333; color: #fff !important; border-color: #6200ea; box-shadow: none; }
         .form-control::placeholder { color: #888; }
         
         .btn-main { background: linear-gradient(90deg, #00c6ff, #0072ff); border: none; height: 55px; font-size: 1.2rem; font-weight: 700; color: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4); }
         .nav-pills .nav-link { background: #222; color: #aaa; border-radius: 10px; margin: 0 2px; }
         .nav-pills .nav-link.active { background: #6200ea; color: #fff; font-weight: bold; }
         
+        /* สถานะในการ์ด */
         .status-card { background: #222; border-radius: 12px; border: 1px solid #333; transition: all 0.2s; }
-        .status-booked { border-bottom: 4px solid #ffc107; }
-        .status-used { border-bottom: 4px solid #2ecc71; opacity: 0.7; }
+        .status-booked { border-bottom: 4px solid #ffc107; } /* รอ */
+        .status-partial { border-bottom: 4px solid #fd7e14; } /* เข้าบางส่วน */
+        .status-full { border-bottom: 4px solid #2ecc71; opacity: 0.7; } /* ครบ */
         
-        /* --- ปรับแต่งตาราง Admin (พื้นขาว-ตัวหนังสือดำ) --- */
-        .admin-table-container { 
-            overflow-x: auto; 
-            background: white; 
-            border-radius: 10px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
-        .table-custom { 
-            background-color: #ffffff; /* พื้นหลังขาว */
-            color: #000000; /* ตัวหนังสือดำ */
-            font-size: 0.9rem; 
-            width: 100%; 
-            white-space: nowrap; 
-            margin-bottom: 0;
-        }
-        .table-custom th { 
-            background-color: #212529; /* หัวตารางสีดำ */
-            color: #ffeb3b; /* ตัวหนังสือหัวตารางสีเหลือง */
-            padding: 15px; 
-            font-weight: 600;
-        }
-        .table-custom td { 
-            vertical-align: middle; 
-            color: #000000; /* บังคับตัวหนังสือในตารางเป็นสีดำ */
-            padding: 12px 15px; 
-            border-bottom: 1px solid #dee2e6; /* เส้นขอบสีเทาอ่อน */
-        }
-        /* บังคับตัวหนังสือรองให้เป็นสีเทาเข้ม อ่านง่าย */
+        /* ตาราง Admin */
+        .admin-table-container { overflow-x: auto; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .table-custom { background-color: #ffffff; color: #000000; font-size: 0.9rem; width: 100%; white-space: nowrap; margin-bottom: 0; }
+        .table-custom th { background-color: #212529; color: #ffeb3b; padding: 15px; font-weight: 600; }
+        .table-custom td { vertical-align: middle; color: #000000; padding: 12px 15px; border-bottom: 1px solid #dee2e6; }
         .table-custom .text-muted { color: #555 !important; }
-        
-        /* สไตล์ปุ่มเลือกโซน */
+
         .btn-check:checked + .btn-vip { background-color: #ffc107; color: #000; border-color: #ffc107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
         .btn-vip { border: 2px solid #ffc107; color: #ffc107; background: transparent; transition: all 0.2s; }
-        
         .btn-check:checked + .btn-vvip { background-color: #d63384; color: #fff; border-color: #d63384; box-shadow: 0 0 15px rgba(214, 51, 132, 0.5); }
         .btn-vvip { border: 2px solid #d63384; color: #d63384; background: transparent; transition: all 0.2s; }
     </style>
@@ -138,11 +102,9 @@
                     <div class="mb-3">
                         <input type="tel" id="custPhone" class="form-control" placeholder="เบอร์โทร">
                     </div>
-                    
                     <div class="mb-3">
                         <input type="text" id="paymentRef" class="form-control" placeholder="หมายเหตุอื่นๆ (ถ้ามี)">
                     </div>
-
                     <div class="mb-4">
                         <label class="text-white-50 small mb-1">ช่องทางการชำระเงิน</label>
                         <select id="paymentMethod" class="form-select">
@@ -211,10 +173,8 @@
                             <tr>
                                 <th>โต๊ะ</th>
                                 <th>ลูกค้า</th>
-                                <th>📅 วันเวลาจอง</th>
-                                <th>การชำระ</th>
-                                <th>สถานะ</th>
-                                <th>จัดการ</th>
+                                <th>📅 จองเมื่อ</th>
+                                <th>ชำระ/เข้า</th> <th>จัดการ</th>
                             </tr>
                         </thead>
                         <tbody id="adminList"></tbody>
@@ -270,26 +230,19 @@
     async function getNextQueue(prefix) {
         const q = query(collection(db, "bookings"));
         const snapshot = await getDocs(q);
-        
         let existingNumbers = [];
         snapshot.forEach(doc => {
             const t = doc.data().table; 
             if (t.startsWith(prefix)) {
                 const numPart = parseInt(t.replace(prefix, ''));
-                if (!isNaN(numPart)) {
-                    existingNumbers.push(numPart);
-                }
+                if (!isNaN(numPart)) existingNumbers.push(numPart);
             }
         });
-
         existingNumbers.sort((a, b) => a - b);
         let nextNum = 1;
         for (let num of existingNumbers) {
-            if (num === nextNum) {
-                nextNum++;
-            } else if (num > nextNum) {
-                break; 
-            }
+            if (num === nextNum) nextNum++;
+            else if (num > nextNum) break; 
         }
         return prefix + String(nextNum).padStart(3, '0');
     }
@@ -304,41 +257,33 @@
         const payRef = document.getElementById('paymentRef').value; 
 
         if(!name) return alert("❌ กรุณาใส่ชื่อลูกค้า");
-        
         btn.disabled = true; btn.innerText = "⏳ กำลังคำนวณคิว...";
 
         try {
             const autoTableNo = await getNextQueue(zonePrefix);
-
             if(!confirm(`ระบบจัดคิวให้ที่โต๊ะ: ${autoTableNo}\nวิธีชำระ: ${payMethod}\nยืนยันการจองไหมครับ?`)) {
                 btn.disabled = false; btn.innerText = "✅ รันคิวและยืนยัน";
                 return;
             }
-
             btn.innerText = "⏳ กำลังบันทึก...";
             
+            // เพิ่ม field pax (จำนวนที่เข้า), maxPax (โควต้า)
             const docRef = await addDoc(collection(db, "bookings"), {
                 name, phone, table: autoTableNo, 
                 paymentMethod: payMethod, paymentRef: payRef, 
-                status: "booked", createdAt: serverTimestamp()
+                status: "booked", pax: 0, maxPax: 4, 
+                createdAt: serverTimestamp()
             });
 
             document.getElementById('ticketResult').classList.remove('hidden');
             const qrContainer = document.getElementById("qrcodeDisplay");
             qrContainer.innerHTML = ""; 
             new QRCode(qrContainer, { text: docRef.id, width: 180, height: 180, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
-
             document.getElementById('displayName').innerText = name;
             document.getElementById('displayTable').innerText = autoTableNo;
-
             btn.disabled = false; btn.innerText = "✅ จองสำเร็จ (กดจองต่อ)";
             setTimeout(() => { document.getElementById('ticketResult').scrollIntoView({behavior: "smooth"}); }, 300);
-
-        } catch (e) {
-            console.error(e);
-            alert("Error: " + e.message);
-            btn.disabled = false; btn.innerText = "ลองใหม่อีกครั้ง";
-        }
+        } catch (e) { console.error(e); alert("Error: " + e.message); btn.disabled = false; btn.innerText = "ลองใหม่อีกครั้ง"; }
     };
 
     window.resetForm = () => {
@@ -349,7 +294,7 @@
         document.getElementById('qrcodeDisplay').innerHTML = "";
     };
 
-    // --- 2. โหลดสถานะโต๊ะ ---
+    // --- 2. โหลดสถานะโต๊ะ (แสดงจำนวน) ---
     window.loadTableStatus = async () => {
         const display = document.getElementById('statusList');
         display.innerHTML = "<div class='text-center text-white'>⏳ กำลังโหลด...</div>";
@@ -361,18 +306,18 @@
         
         snapshot.forEach((doc) => {
             const d = doc.data();
-            const isUsed = d.status === 'used';
-            const statusClass = isUsed ? 'status-used' : 'status-booked';
-            const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
-            
-            let statusText = '🟡 จองแล้ว';
-            if (isUsed) {
-                let timeStr = "-";
-                if(d.checkInTime) {
-                    const date = d.checkInTime.toDate();
-                    timeStr = date.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-                }
-                statusText = `🟢 เข้า ${timeStr} น.`;
+            const currentPax = d.pax || 0;
+            const maxPax = d.maxPax || 4;
+            let statusClass = 'status-booked';
+            let statusText = `🟡 รอ (0/${maxPax})`;
+            let zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
+
+            if (currentPax >= maxPax) {
+                statusClass = 'status-full';
+                statusText = `🟢 ครบ (${maxPax}/${maxPax})`;
+            } else if (currentPax > 0) {
+                statusClass = 'status-partial';
+                statusText = `🟠 เข้า ${currentPax}/${maxPax}`;
             }
             
             display.innerHTML += `
@@ -386,7 +331,7 @@
         });
     };
 
-    // --- 3. สแกน ---
+    // --- 3. สแกน (ระบบนับจำนวนคน) ---
     window.startScanner = () => {
         document.getElementById('stopCamBtn').classList.remove('hidden');
         html5QrcodeScanner = new Html5Qrcode("reader");
@@ -398,24 +343,72 @@
             document.getElementById('stopCamBtn').classList.add('hidden');
         });
     };
+    
+    // ฟังก์ชันสแกนและถามจำนวนคน
     const onScanSuccess = async (decodedText) => {
-        html5QrcodeScanner.pause();
+        html5QrcodeScanner.pause(); // หยุดกล้องชั่วคราว
         const resDiv = document.getElementById('scanResult');
-        resDiv.innerHTML = "⏳ ตรวจสอบ...";
+        resDiv.innerHTML = "⏳ ตรวจสอบข้อมูล...";
+        
         try {
             const docRef = doc(db, "bookings", decodedText);
             const snap = await getDoc(docRef);
+            
             if (snap.exists()) {
                 const d = snap.data();
-                if (d.status === 'booked') {
-                    if(confirm(`ยืนยันลูกค้า?\n${d.name} (โต๊ะ ${d.table})`)) {
-                        await updateDoc(docRef, { status: 'used', checkInTime: serverTimestamp() });
-                        resDiv.innerHTML = `<h3 class='text-success fw-bold'>✅ ผ่าน!</h3>โต๊ะ ${d.table} เข้างานแล้ว`;
+                const currentPax = d.pax || 0; // คนที่เข้าแล้ว
+                const maxPax = d.maxPax || 4; // โควต้าเต็ม
+                const remaining = maxPax - currentPax; // เหลือ
+
+                // 1. ถ้าเต็มแล้ว
+                if (remaining <= 0) {
+                    resDiv.innerHTML = `<h3 class='text-danger fw-bold'>❌ เต็มแล้ว!</h3>เข้าครบ ${maxPax} คนแล้ว`;
+                    alert("❌ สิทธิ์โต๊ะนี้เต็มแล้วครับ (เข้าครบ 4 คนแล้ว)");
+                } else {
+                    // 2. ถ้ายังไม่เต็ม -> เด้ง Popup ถามจำนวน
+                    let enterAmount = prompt(`
+🎫 โต๊ะ: ${d.table} (คุณ ${d.name})
+✅ เข้าแล้ว: ${currentPax}/${maxPax} คน
+⚠️ เหลือโควต้า: ${remaining} คน
+
+👇 ระบุจำนวนคนที่เข้าตอนนี้ (1-${remaining}):
+                    `, "1");
+
+                    let amount = parseInt(enterAmount);
+
+                    // ตรวจสอบค่าที่กรอก
+                    if (!isNaN(amount) && amount > 0 && amount <= remaining) {
+                        const newPax = currentPax + amount;
+                        let newStatus = newPax >= maxPax ? 'used' : 'active'; // ถ้าครบเปลี่ยนเป็น used, ถ้ายังไม่ครบเป็น active
+
+                        await updateDoc(docRef, { 
+                            pax: newPax, 
+                            status: newStatus,
+                            checkInTime: serverTimestamp() 
+                        });
+                        
+                        resDiv.innerHTML = `<h3 class='text-success fw-bold'>✅ บันทึกสำเร็จ!</h3>เข้าเพิ่ม ${amount} คน<br>รวมเป็น ${newPax}/${maxPax}`;
+                        alert(`✅ บันทึกเรียบร้อย!\nเข้าเพิ่ม: ${amount} คน\nยอดรวม: ${newPax}/${maxPax} คน`);
+                    
+                    } else if (enterAmount !== null) {
+                        // กรอกผิด
+                        alert(`❌ กรุณากรอกเลขให้ถูกต้อง (ไม่เกิน ${remaining} คน)`);
+                        resDiv.innerHTML = "<h4 class='text-warning'>ระบุจำนวนผิด กรุณาสแกนใหม่</h4>";
+                    } else {
+                        // กด Cancel
+                        resDiv.innerHTML = "ยกเลิกรายการ";
                     }
-                } else { resDiv.innerHTML = `<h3 class='text-danger fw-bold'>❌ ซ้ำ!</h3>QR นี้ใช้ไปแล้ว`; }
-            } else { resDiv.innerHTML = `<h3 class='text-warning fw-bold'>⚠️ ไม่พบข้อมูล</h3>`; }
-        } catch (e) { resDiv.innerHTML = "Error: " + e.message; }
-        setTimeout(() => html5QrcodeScanner.resume(), 2500);
+                }
+            } else { 
+                resDiv.innerHTML = `<h3 class='text-warning fw-bold'>⚠️ ไม่พบข้อมูลการจอง</h3>`; 
+            }
+        } catch (e) { 
+            console.error(e);
+            resDiv.innerHTML = "Error: " + e.message; 
+        }
+        
+        // เริ่มกล้องใหม่หลังทำรายการเสร็จ
+        setTimeout(() => html5QrcodeScanner.resume(), 1000);
     };
 
     // --- 4. Admin ---
@@ -446,24 +439,17 @@
             snapshot.forEach((doc) => {
                 const d = doc.data();
                 const bookedTime = formatThaiDate(d.createdAt);
-                const checkInTime = formatThaiDate(d.checkInTime);
                 const rowClass = d.status === 'used' ? 'table-active' : '';
                 const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
-
-                const payBadge = d.paymentMethod === 'เงินสด' 
-                    ? '<span class="badge bg-success">💵 เงินสด</span>' 
-                    : '<span class="badge bg-primary">🏦 โอน</span>';
+                const payBadge = d.paymentMethod === 'เงินสด' ? '<span class="badge bg-success">💵 เงินสด</span>' : '<span class="badge bg-primary">🏦 โอน</span>';
                 
-                const payInfo = `
-                    ${payBadge}<br>
-                    <small class="text-muted fst-italic">${d.paymentRef || '-'}</small>
-                `;
-
-                // สถานะและวันที่เข้างาน (ตัวหนังสือดำ)
-                let statusDisplay = `<span class="badge bg-warning text-dark">รอเข้างาน</span>`;
-                if(d.status === 'used') {
-                    statusDisplay = `<span class="badge bg-success">✅ เข้าแล้ว</span><br><small class="text-dark fw-bold">${checkInTime || ''}</small>`;
-                }
+                // คำนวณสถานะเข้างาน
+                const currentPax = d.pax || 0;
+                const maxPax = d.maxPax || 4;
+                let paxBadge = `<span class="badge bg-warning text-dark">รอ (${currentPax}/${maxPax})</span>`;
+                
+                if(currentPax >= maxPax) paxBadge = `<span class="badge bg-success">✅ ครบ (${currentPax}/${maxPax})</span>`;
+                else if(currentPax > 0) paxBadge = `<span class="badge bg-info text-dark">🟠 มาบางส่วน (${currentPax}/${maxPax})</span>`;
 
                 list.innerHTML += `
                     <tr class="${rowClass}">
@@ -473,8 +459,8 @@
                             <small class="text-muted">${d.phone || ''}</small>
                         </td>
                         <td class="text-dark fw-bold">${bookedTime}</td>
-                        <td>${payInfo}</td>
-                        <td>${statusDisplay}</td>
+                        <td class="text-dark">${payBadge}<br><small>${d.paymentRef || '-'}</small></td>
+                        <td>${paxBadge}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
                                 <button class="btn btn-outline-dark" onclick="showQr('${doc.id}')">QR</button>
