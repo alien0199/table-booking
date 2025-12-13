@@ -40,11 +40,11 @@
         .table-badge { font-size: 48px; font-weight: 700; background: #ffeb3b; color: #000; padding: 0px 40px; border-radius: 15px; box-shadow: 0 5px 10px rgba(0,0,0,0.3); margin-top: 5px; display: inline-block; }
         .footer-note { margin-top: 20px; font-size: 14px; opacity: 0.9; font-weight: 300; }
 
-        /* --- ปรับแต่ง Input (แก้ไขใหม่ตามที่ขอ) --- */
+        /* --- ปรับแต่ง Input --- */
         .form-control, .form-select { 
-            background-color: #ffffff !important; /* พื้นหลังขาว */
+            background-color: #ffffff !important; 
             border: 2px solid #ddd;
-            color: #0056b3 !important; /* ตัวหนังสือสีน้ำเงินเข้ม */
+            color: #0056b3 !important; 
             font-weight: 600; 
             border-radius: 12px; 
             height: 50px; 
@@ -52,13 +52,13 @@
             text-align: center; 
         }
         .form-control:focus, .form-select:focus { 
-            background-color: #f0f8ff !important; /* พื้นหลังตอนกดเป็นฟ้าอ่อนๆ */
+            background-color: #f0f8ff !important; 
             border-color: #0056b3; 
             color: #0056b3 !important; 
             box-shadow: 0 0 10px rgba(0, 86, 179, 0.3); 
         }
         .form-control::placeholder {
-            color: #aaa; /* Placeholder สีเทา */
+            color: #aaa;
             font-weight: 400;
         }
         
@@ -136,18 +136,13 @@
 
                     <div class="mb-3">
                         <label class="text-white-50 small mb-1">ช่องทางการชำระเงิน</label>
-                        <select id="paymentMethod" class="form-select" onchange="toggleSlipInput()">
+                        <select id="paymentMethod" class="form-select">
                             <option value="เงินสด">💵 เงินสด</option>
                             <option value="โอนเข้าบัญชี">🏦 โอนเข้าบัญชี</option>
                         </select>
                     </div>
 
-                    <div id="slipUploadContainer" class="mb-4 hidden">
-                        <label class="text-warning small mb-1">แนบสลิปโอนเงิน (ถ้ามี)</label>
-                        <input type="file" id="slipFile" class="form-control" accept="image/*">
-                    </div>
-                    
-                    <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100">✅ รันคิวและยืนยัน</button>
+                    <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100 mt-3">✅ รันคิวและยืนยัน</button>
                 </div>
                 
                 <div id="ticketResult" class="hidden animate__animated animate__fadeInUp">
@@ -239,20 +234,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="slipModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title text-dark">หลักฐานการโอน</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body text-center">
-        <img id="slipImagePreview" src="" class="img-fluid rounded shadow">
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="modal fade" id="qrModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-dark text-white border-secondary">
@@ -271,6 +252,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    // ยังคง import ไว้เพื่อความชัวร์ไม่ให้กระทบ code อื่นๆ แม้จะไม่ได้ใช้แล้ว
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
     const firebaseConfig = {
@@ -290,7 +272,6 @@
     
     let html5QrcodeScanner = null;
     let qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
-    let slipModal = new bootstrap.Modal(document.getElementById('slipModal'));
     let currentScanDoc = null;
     let currentScanData = null;
 
@@ -320,12 +301,7 @@
         return prefix + String(nextNum).padStart(3, '0');
     }
 
-    window.toggleSlipInput = () => {
-        const method = document.getElementById('paymentMethod').value;
-        const slipDiv = document.getElementById('slipUploadContainer');
-        if(method === 'โอนเข้าบัญชี') slipDiv.classList.remove('hidden');
-        else slipDiv.classList.add('hidden');
-    }
+    // ลบ window.toggleSlipInput ออก
 
     window.addBooking = async () => {
         const btn = document.getElementById('btnSave');
@@ -334,30 +310,22 @@
         const phone = document.getElementById('custPhone').value;
         const payMethod = document.getElementById('paymentMethod').value; 
         const payRef = document.getElementById('paymentRef').value; 
-        const slipFile = document.getElementById('slipFile').files[0];
+        // ลบการรับค่า slipFile ออก
 
         if(!name) return alert("❌ กรุณาใส่ชื่อลูกค้า");
-        if(payMethod === 'โอนเข้าบัญชี' && !slipFile) {
-            if(!confirm("⚠️ คุณยังไม่ได้แนบสลิป ยืนยันจะจองไหม?")) return;
-        }
 
         btn.disabled = true; btn.innerText = "⏳ กำลังประมวลผล...";
 
         try {
             const autoTableNo = await getNextQueue(zonePrefix);
-            let slipUrl = "";
-            if (slipFile) {
-                btn.innerText = "⏳ กำลังอัปโหลดสลิป...";
-                const storageRef = ref(storage, 'slips/' + Date.now() + '_' + slipFile.name);
-                await uploadBytes(storageRef, slipFile);
-                slipUrl = await getDownloadURL(storageRef);
-            }
-
+            // ลบโค้ดส่วน Upload Slip ออกทั้งหมด
+            
             btn.innerText = "⏳ กำลังบันทึกข้อมูล...";
             
             const docRef = await addDoc(collection(db, "bookings"), {
                 name, phone, table: autoTableNo, 
-                paymentMethod: payMethod, paymentRef: payRef, slipUrl: slipUrl,
+                paymentMethod: payMethod, paymentRef: payRef, 
+                // ลบ slipUrl ออก
                 status: "booked", pax: 0, maxPax: 4, 
                 createdAt: serverTimestamp()
             });
@@ -372,7 +340,7 @@
             setTimeout(() => { document.getElementById('ticketResult').scrollIntoView({behavior: "smooth"}); }, 300);
         } catch (e) { 
             console.error(e); 
-            alert("Error: " + e.message + "\n(เช็คว่าเปิด Storage ใน Firebase Console หรือยัง?)"); 
+            alert("Error: " + e.message); 
             btn.disabled = false; btn.innerText = "ลองใหม่อีกครั้ง"; 
         }
     };
@@ -381,7 +349,7 @@
         document.getElementById('custName').value = '';
         document.getElementById('custPhone').value = '';
         document.getElementById('paymentRef').value = '';
-        document.getElementById('slipFile').value = '';
+        // ลบ reset slipFile
         document.getElementById('ticketResult').classList.add('hidden');
         document.getElementById('qrcodeDisplay').innerHTML = "";
     };
@@ -552,12 +520,8 @@
                 const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
                 const payBadge = d.paymentMethod === 'เงินสด' ? '<span class="badge bg-success">💵 เงินสด</span>' : '<span class="badge bg-primary">🏦 โอน</span>';
                 
-                let slipBtn = '';
-                if(d.slipUrl) {
-                    slipBtn = `<br><button class="btn btn-sm btn-info mt-1" onclick="showSlip('${d.slipUrl}')">📄 ดูสลิป</button>`;
-                }
-
-                const payInfo = `${payBadge}${slipBtn}<br><small class="text-muted fst-italic">${d.paymentRef || '-'}</small>`;
+                // ส่วนแสดงปุ่มสลิปลบออกไปแล้ว
+                const payInfo = `${payBadge}<br><small class="text-muted fst-italic">${d.paymentRef || '-'}</small>`;
 
                 const currentPax = d.pax || 0;
                 const maxPax = d.maxPax || 4;
@@ -592,10 +556,7 @@
         qrModal.show();
     };
 
-    window.showSlip = (url) => {
-        document.getElementById('slipImagePreview').src = url;
-        slipModal.show();
-    };
+    // window.showSlip ลบออก
 
     window.del = async (id) => { 
         if(confirm("⚠️ ยืนยันการลบ?")) { 
@@ -604,7 +565,7 @@
         }
     };
     
-    window.del = window.del; window.showQr = window.showQr; window.showSlip = window.showSlip;
+    window.del = window.del; window.showQr = window.showQr; // window.showSlip ลบออก
 </script>
 
 </body>
