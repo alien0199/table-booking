@@ -12,7 +12,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap');
 
-        /* ลบ padding-bottom ของ footer ออก */
         body { font-family: 'Kanit', sans-serif; background-color: #050505; color: #fff; padding-bottom: 20px; position: relative; min-height: 100vh; }
         .container { max-width: 450px; margin-top: 15px; padding-bottom: 20px; }
         .hidden { display: none !important; }
@@ -64,9 +63,11 @@
         .status-booked { border-bottom: 4px solid #ffc107; }
         .status-used { border-bottom: 4px solid #2ecc71; opacity: 0.7; }
         
-        .table-custom { background-color: #1a1a1a; color: #fff; font-size: 0.9rem; }
-        .table-custom th { background-color: #333; color: #ffeb3b; }
-        .table-custom td { vertical-align: middle; color: #ddd; }
+        /* ตาราง Admin แบบเต็มจอ */
+        .admin-table-container { overflow-x: auto; }
+        .table-custom { background-color: #1a1a1a; color: #fff; font-size: 0.85rem; width: 100%; white-space: nowrap; }
+        .table-custom th { background-color: #333; color: #ffeb3b; padding: 10px; }
+        .table-custom td { vertical-align: middle; color: #ddd; padding: 10px; border-bottom: 1px solid #333; }
 
         .btn-check:checked + .btn-vip { background-color: #ffc107; color: #000; border-color: #ffc107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
         .btn-vip { border: 2px solid #ffc107; color: #ffc107; background: transparent; transition: all 0.2s; }
@@ -179,13 +180,13 @@
                 </div>
                 <button onclick="loadBookingsAdmin()" class="btn btn-info w-100 mb-3"><i class="bi bi-arrow-clockwise"></i> โหลดข้อมูลล่าสุด</button>
                 
-                <div class="table-responsive">
-                    <table class="table table-custom text-center table-bordered">
+                <div class="admin-table-container">
+                    <table class="table table-custom table-bordered">
                         <thead>
                             <tr>
                                 <th>โต๊ะ</th>
-                                <th>ข้อมูลลูกค้า</th>
-                                <th>การชำระ</th>
+                                <th>ลูกค้า</th>
+                                <th>📅 วันเวลาจอง</th> <th>การชำระ</th>
                                 <th>สถานะ</th>
                                 <th>จัดการ</th>
                             </tr>
@@ -236,7 +237,7 @@
     function formatThaiDate(timestamp) {
         if(!timestamp) return "-";
         return timestamp.toDate().toLocaleString('th-TH', { 
-            hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit'
+            day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
         });
     }
 
@@ -322,7 +323,7 @@
         document.getElementById('qrcodeDisplay').innerHTML = "";
     };
 
-    // --- 2. โหลดสถานะโต๊ะ (ปรับปรุงใหม่ แสดงเวลาเข้างาน) ---
+    // --- 2. โหลดสถานะโต๊ะ ---
     window.loadTableStatus = async () => {
         const display = document.getElementById('statusList');
         display.innerHTML = "<div class='text-center text-white'>⏳ กำลังโหลด...</div>";
@@ -338,7 +339,6 @@
             const statusClass = isUsed ? 'status-used' : 'status-booked';
             const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
             
-            // คำนวณข้อความแสดงสถานะ
             let statusText = '🟡 จองแล้ว';
             if (isUsed) {
                 let timeStr = "-";
@@ -405,7 +405,7 @@
 
     window.loadBookingsAdmin = async () => {
         const list = document.getElementById('adminList');
-        list.innerHTML = "<tr><td colspan='5' class='text-center'>⏳ กำลังโหลด...</td></tr>";
+        list.innerHTML = "<tr><td colspan='6' class='text-center'>⏳ กำลังโหลด...</td></tr>";
         
         try {
             const q = query(collection(db, "bookings"), orderBy("table", "asc"));
@@ -413,7 +413,7 @@
             list.innerHTML = "";
             
             if(snapshot.empty) {
-                list.innerHTML = "<tr><td colspan='5' class='text-center'>- ว่าง -</td></tr>";
+                list.innerHTML = "<tr><td colspan='6' class='text-center'>- ว่าง -</td></tr>";
                 return;
             }
 
@@ -421,13 +421,9 @@
                 const d = doc.data();
                 const bookedTime = formatThaiDate(d.createdAt);
                 const checkInTime = formatThaiDate(d.checkInTime);
-                const statusBadge = d.status === 'used' 
-                    ? `<span class="badge bg-success">เข้า ${checkInTime}</span>` 
-                    : `<span class="badge bg-warning text-dark">จอง ${bookedTime}</span>`;
                 const rowClass = d.status === 'used' ? 'table-active' : '';
                 const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
 
-                // แสดงผลการชำระเงินในตารางแอดมิน
                 const payBadge = d.paymentMethod === 'เงินสด' 
                     ? '<span class="badge bg-success">💵 เงินสด</span>' 
                     : '<span class="badge bg-primary">🏦 โอน</span>';
@@ -437,6 +433,12 @@
                     <small class="text-muted fst-italic">${d.paymentRef || '-'}</small>
                 `;
 
+                // สถานะและวันที่เข้างาน
+                let statusDisplay = `<span class="badge bg-warning text-dark">รอเข้างาน</span>`;
+                if(d.status === 'used') {
+                    statusDisplay = `<span class="badge bg-success">✅ เข้าแล้ว</span><br><small class="text-white-50">${checkInTime || ''}</small>`;
+                }
+
                 list.innerHTML += `
                     <tr class="${rowClass}">
                         <td class="fw-bold" style="font-size:1.1rem; color:${zoneColor}">${d.table}</td>
@@ -444,8 +446,9 @@
                             <div>${d.name}</div>
                             <small class="text-muted">${d.phone || ''}</small>
                         </td>
+                        <td>${bookedTime}</td>
                         <td>${payInfo}</td>
-                        <td>${statusBadge}</td>
+                        <td>${statusDisplay}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
                                 <button class="btn btn-outline-light" onclick="showQr('${doc.id}')">QR</button>
