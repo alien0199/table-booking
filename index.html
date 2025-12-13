@@ -32,6 +32,7 @@
         .event-sub { font-size: 24px; color: #ffeb3b; font-weight: 700; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); margin-bottom: 20px; }
         .ticket-header { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.6); padding: 5px 25px; border-radius: 50px; font-size: 16px; margin-bottom: 25px; backdrop-filter: blur(5px); }
         
+        /* QR Code */
         .qr-bg { background: #fff; padding: 15px; border-radius: 15px; margin: 0 auto 20px auto; width: 210px; height: 210px; display: flex; align-items: center; justify-content: center; }
         #qrcodeDisplay img, #modalQrcodeDisplay img { display: block; margin: 0 auto; }
         
@@ -39,8 +40,28 @@
         .table-badge { font-size: 48px; font-weight: 700; background: #ffeb3b; color: #000; padding: 0px 40px; border-radius: 15px; box-shadow: 0 5px 10px rgba(0,0,0,0.3); margin-top: 5px; display: inline-block; }
         .footer-note { margin-top: 20px; font-size: 14px; opacity: 0.9; font-weight: 300; }
 
-        /* UI ทั่วไป */
-        .form-control, .form-select { background: #222; border: 1px solid #444; color: #fff !important; border-radius: 12px; height: 50px; font-size: 1.1rem; text-align: center; }
+        /* --- ปรับแต่ง Input (แก้ไขใหม่ตามที่ขอ) --- */
+        .form-control, .form-select { 
+            background-color: #ffffff !important; /* พื้นหลังขาว */
+            border: 2px solid #ddd;
+            color: #0056b3 !important; /* ตัวหนังสือสีน้ำเงินเข้ม */
+            font-weight: 600; 
+            border-radius: 12px; 
+            height: 50px; 
+            font-size: 1.1rem; 
+            text-align: center; 
+        }
+        .form-control:focus, .form-select:focus { 
+            background-color: #f0f8ff !important; /* พื้นหลังตอนกดเป็นฟ้าอ่อนๆ */
+            border-color: #0056b3; 
+            color: #0056b3 !important; 
+            box-shadow: 0 0 10px rgba(0, 86, 179, 0.3); 
+        }
+        .form-control::placeholder {
+            color: #aaa; /* Placeholder สีเทา */
+            font-weight: 400;
+        }
+        
         .btn-main { background: linear-gradient(90deg, #00c6ff, #0072ff); border: none; height: 55px; font-size: 1.2rem; font-weight: 700; color: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4); }
         .nav-pills .nav-link { background: #222; color: #aaa; border-radius: 10px; margin: 0 2px; }
         .nav-pills .nav-link.active { background: #6200ea; color: #fff; font-weight: bold; }
@@ -61,7 +82,6 @@
             backdrop-filter: blur(5px);
         }
         
-        /* Table Styles */
         .admin-table-container { overflow-x: auto; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .table-custom { background-color: #ffffff; color: #000000; font-size: 0.9rem; width: 100%; white-space: nowrap; margin-bottom: 0; }
         .table-custom th { background-color: #212529; color: #ffeb3b; padding: 15px; font-weight: 600; }
@@ -92,31 +112,47 @@
         <div class="tab-pane fade show active" id="create">
             <div class="user-container">
                 <div class="card p-4 border-0 shadow mb-4" style="background: #151515; border-radius: 20px;">
+                    
                     <div class="mb-4">
                         <label class="text-white-50 small mb-2">เลือกชุดโต๊ะ</label>
                         <div class="d-flex gap-2">
                             <input type="radio" class="btn-check" name="zoneOption" id="optVIP" value="VIP" checked>
                             <label class="btn btn-vip w-50 py-3 fw-bold rounded-3" for="optVIP">🎫 VIP (ชุด 1)</label>
+
                             <input type="radio" class="btn-check" name="zoneOption" id="optVVIP" value="VVIP">
                             <label class="btn btn-vvip w-50 py-3 fw-bold rounded-3" for="optVVIP">👑 VVIP (ชุด 2)</label>
                         </div>
                     </div>
-                    <div class="mb-3"><input type="text" id="custName" class="form-control" placeholder="ชื่อลูกค้า"></div>
-                    <div class="mb-3"><input type="tel" id="custPhone" class="form-control" placeholder="เบอร์โทร"></div>
-                    <div class="mb-3"><input type="text" id="paymentRef" class="form-control" placeholder="หมายเหตุอื่นๆ (ถ้ามี)"></div>
-                    <div class="mb-4">
+
+                    <div class="mb-3">
+                        <input type="text" id="custName" class="form-control" placeholder="ชื่อลูกค้า">
+                    </div>
+                    <div class="mb-3">
+                        <input type="tel" id="custPhone" class="form-control" placeholder="เบอร์โทร">
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" id="paymentRef" class="form-control" placeholder="หมายเหตุอื่นๆ (ถ้ามี)">
+                    </div>
+
+                    <div class="mb-3">
                         <label class="text-white-50 small mb-1">ช่องทางการชำระเงิน</label>
-                        <select id="paymentMethod" class="form-select">
+                        <select id="paymentMethod" class="form-select" onchange="toggleSlipInput()">
                             <option value="เงินสด">💵 เงินสด</option>
                             <option value="โอนเข้าบัญชี">🏦 โอนเข้าบัญชี</option>
                         </select>
                     </div>
+
+                    <div id="slipUploadContainer" class="mb-4 hidden">
+                        <label class="text-warning small mb-1">แนบสลิปโอนเงิน (ถ้ามี)</label>
+                        <input type="file" id="slipFile" class="form-control" accept="image/*">
+                    </div>
+                    
                     <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100">✅ รันคิวและยืนยัน</button>
                 </div>
                 
                 <div id="ticketResult" class="hidden animate__animated animate__fadeInUp">
                     <p class="text-center text-success mb-2">🎉 จองสำเร็จ!</p>
-                    <div class="ticket-card">
+                    <div class="ticket-card" id="finalTicket">
                         <div class="event-title">สรรพยา บ้านเรา</div>
                         <div class="event-sub">โพ-ออก เฟสติวัล</div>
                         <div class="ticket-header">บัตรจองโต๊ะ VIP</div>
@@ -166,16 +202,7 @@
                 <button onclick="loadBookingsAdmin()" class="btn btn-info w-100 mb-3"><i class="bi bi-arrow-clockwise"></i> โหลดข้อมูลล่าสุด</button>
                 <div class="admin-table-container">
                     <table class="table table-custom">
-                        <thead>
-                            <tr>
-                                <th>โต๊ะ</th>
-                                <th>ลูกค้า</th>
-                                <th>📅 จอง</th>
-                                <th>⏰ เข้าล่าสุด</th> <th>การชำระ</th>
-                                <th>เข้า</th>
-                                <th>จัดการ</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>โต๊ะ</th><th>ลูกค้า</th><th>📅 จองเมื่อ</th><th>การชำระ</th><th>จำนวนเข้า</th><th>จัดการ</th></tr></thead>
                         <tbody id="adminList"></tbody>
                     </table>
                 </div>
@@ -206,10 +233,24 @@
         <div style="font-size:2rem;font-weight:800;margin-bottom:10px;">📥 เช็คอิน</div>
         <div id="modalInfo" style="font-size:1.3rem;font-weight:500;margin-bottom:15px;"></div>
         <label class="d-block text-start fw-bold mt-2" style="font-size:1.2rem;">ระบุจำนวน (คน):</label>
-        <input type="number" id="modalPaxInput" style="width:100%;height:70px;font-size:3rem;text-align:center;font-weight:bold;border:3px solid #000;border-radius:15px;margin:10px 0 20px 0;background:#f8f9fa;" value="1" min="1">
+        <input type="number" id="modalPaxInput" style="width:100%;height:70px;font-size:3rem;text-align:center;font-weight:bold;border:3px solid #000;border-radius:15px;margin:10px 0 20px 0;background:#f8f9fa;color:#000;" value="1" min="1">
         <button onclick="confirmScan()" class="btn w-100 py-3 fs-4 fw-bold btn-success mb-2">✅ ยืนยัน</button>
         <button onclick="closeScanModal()" class="btn w-100 py-3 fs-4 fw-bold btn-danger">❌ ยกเลิก</button>
     </div>
+</div>
+
+<div class="modal fade" id="slipModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-dark">หลักฐานการโอน</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="slipImagePreview" src="" class="img-fluid rounded shadow">
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="modal fade" id="qrModal" tabindex="-1">
@@ -230,7 +271,8 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyD3s78zRwEHU5WAiSQIg78ZxWbS5QjXYws",
       authDomain: "my-booking-table-855b0.firebaseapp.com",
@@ -244,9 +286,11 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
+    const storage = getStorage(app);
     
     let html5QrcodeScanner = null;
     let qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+    let slipModal = new bootstrap.Modal(document.getElementById('slipModal'));
     let currentScanDoc = null;
     let currentScanData = null;
 
@@ -276,6 +320,13 @@
         return prefix + String(nextNum).padStart(3, '0');
     }
 
+    window.toggleSlipInput = () => {
+        const method = document.getElementById('paymentMethod').value;
+        const slipDiv = document.getElementById('slipUploadContainer');
+        if(method === 'โอนเข้าบัญชี') slipDiv.classList.remove('hidden');
+        else slipDiv.classList.add('hidden');
+    }
+
     window.addBooking = async () => {
         const btn = document.getElementById('btnSave');
         const zonePrefix = document.querySelector('input[name="zoneOption"]:checked').value;
@@ -283,20 +334,32 @@
         const phone = document.getElementById('custPhone').value;
         const payMethod = document.getElementById('paymentMethod').value; 
         const payRef = document.getElementById('paymentRef').value; 
+        const slipFile = document.getElementById('slipFile').files[0];
 
         if(!name) return alert("❌ กรุณาใส่ชื่อลูกค้า");
-        
-        btn.disabled = true; btn.innerText = "⏳ กำลังบันทึกข้อมูล...";
+        if(payMethod === 'โอนเข้าบัญชี' && !slipFile) {
+            if(!confirm("⚠️ คุณยังไม่ได้แนบสลิป ยืนยันจะจองไหม?")) return;
+        }
+
+        btn.disabled = true; btn.innerText = "⏳ กำลังประมวลผล...";
 
         try {
             const autoTableNo = await getNextQueue(zonePrefix);
+            let slipUrl = "";
+            if (slipFile) {
+                btn.innerText = "⏳ กำลังอัปโหลดสลิป...";
+                const storageRef = ref(storage, 'slips/' + Date.now() + '_' + slipFile.name);
+                await uploadBytes(storageRef, slipFile);
+                slipUrl = await getDownloadURL(storageRef);
+            }
+
+            btn.innerText = "⏳ กำลังบันทึกข้อมูล...";
             
             const docRef = await addDoc(collection(db, "bookings"), {
                 name, phone, table: autoTableNo, 
-                paymentMethod: payMethod, paymentRef: payRef, 
+                paymentMethod: payMethod, paymentRef: payRef, slipUrl: slipUrl,
                 status: "booked", pax: 0, maxPax: 4, 
-                createdAt: serverTimestamp(),
-                checkInTime: null // เริ่มต้นยังไม่มีคนเข้า
+                createdAt: serverTimestamp()
             });
 
             document.getElementById('ticketResult').classList.remove('hidden');
@@ -309,7 +372,7 @@
             setTimeout(() => { document.getElementById('ticketResult').scrollIntoView({behavior: "smooth"}); }, 300);
         } catch (e) { 
             console.error(e); 
-            alert("Error: " + e.message); 
+            alert("Error: " + e.message + "\n(เช็คว่าเปิด Storage ใน Firebase Console หรือยัง?)"); 
             btn.disabled = false; btn.innerText = "ลองใหม่อีกครั้ง"; 
         }
     };
@@ -318,6 +381,7 @@
         document.getElementById('custName').value = '';
         document.getElementById('custPhone').value = '';
         document.getElementById('paymentRef').value = '';
+        document.getElementById('slipFile').value = '';
         document.getElementById('ticketResult').classList.add('hidden');
         document.getElementById('qrcodeDisplay').innerHTML = "";
     };
@@ -361,11 +425,9 @@
     window.openTicketModal = (docId, name, table) => {
         document.getElementById('modalDisplayName').innerText = name;
         document.getElementById('modalDisplayTable').innerText = table;
-        
         const qrContainer = document.getElementById("modalQrcodeDisplay");
         qrContainer.innerHTML = ""; 
         new QRCode(qrContainer, { text: docId, width: 180, height: 180, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
-        
         document.getElementById('ticketModal').classList.remove('hidden');
     };
 
@@ -439,7 +501,7 @@
             await updateDoc(currentScanDoc, { 
                 pax: newPax, 
                 status: newPax >= maxPax ? 'used' : 'active',
-                checkInTime: serverTimestamp() // บันทึกเวลาเข้าล่าสุดทุกครั้ง
+                checkInTime: serverTimestamp() 
             });
             document.getElementById('scanModal').classList.add('hidden');
             document.getElementById('scanResult').innerHTML = `<h3 class='text-success fw-bold'>✅ บันทึกแล้ว!</h3>เข้า ${amount} คน (รวม ${newPax}/${maxPax})`;
@@ -472,7 +534,7 @@
 
     window.loadBookingsAdmin = async () => {
         const list = document.getElementById('adminList');
-        list.innerHTML = "<tr><td colspan='7' class='text-center text-dark'>⏳ กำลังโหลด...</td></tr>";
+        list.innerHTML = "<tr><td colspan='6' class='text-center text-dark'>⏳ กำลังโหลด...</td></tr>";
         
         try {
             const q = query(collection(db, "bookings"), orderBy("table", "asc"));
@@ -480,19 +542,22 @@
             list.innerHTML = "";
             
             if(snapshot.empty) {
-                list.innerHTML = "<tr><td colspan='7' class='text-center text-muted'>- ว่าง -</td></tr>";
+                list.innerHTML = "<tr><td colspan='6' class='text-center text-muted'>- ว่าง -</td></tr>";
                 return;
             }
 
             snapshot.forEach((doc) => {
                 const d = doc.data();
                 const bookedTime = formatThaiDate(d.createdAt);
-                // จัดการเวลาเช็คอิน ถ้าไม่มีค่าจะขึ้นขีด -
-                const checkInTime = d.checkInTime ? `<span class="text-primary fw-bold">${formatThaiDate(d.checkInTime)}</span>` : '<span class="text-muted">-</span>';
-                
                 const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
                 const payBadge = d.paymentMethod === 'เงินสด' ? '<span class="badge bg-success">💵 เงินสด</span>' : '<span class="badge bg-primary">🏦 โอน</span>';
-                const payInfo = `${payBadge}<br><small class="text-muted fst-italic">${d.paymentRef || '-'}</small>`;
+                
+                let slipBtn = '';
+                if(d.slipUrl) {
+                    slipBtn = `<br><button class="btn btn-sm btn-info mt-1" onclick="showSlip('${d.slipUrl}')">📄 ดูสลิป</button>`;
+                }
+
+                const payInfo = `${payBadge}${slipBtn}<br><small class="text-muted fst-italic">${d.paymentRef || '-'}</small>`;
 
                 const currentPax = d.pax || 0;
                 const maxPax = d.maxPax || 4;
@@ -507,8 +572,8 @@
                             <div class="fw-bold">${d.name}</div>
                             <small class="text-muted">${d.phone || ''}</small>
                         </td>
-                        <td class="text-dark"><small>${bookedTime}</small></td>
-                        <td class="text-dark"><small>${checkInTime}</small></td> <td class="text-dark">${payInfo}</td>
+                        <td class="text-dark fw-bold">${bookedTime}</td>
+                        <td class="text-dark">${payInfo}</td>
                         <td>${paxBadge}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
@@ -527,6 +592,11 @@
         qrModal.show();
     };
 
+    window.showSlip = (url) => {
+        document.getElementById('slipImagePreview').src = url;
+        slipModal.show();
+    };
+
     window.del = async (id) => { 
         if(confirm("⚠️ ยืนยันการลบ?")) { 
             await deleteDoc(doc(db, "bookings", id)); 
@@ -534,7 +604,7 @@
         }
     };
     
-    window.del = window.del; window.showQr = window.showQr;
+    window.del = window.del; window.showQr = window.showQr; window.showSlip = window.showSlip;
 </script>
 
 </body>
