@@ -71,6 +71,9 @@
         }
         .form-control::placeholder { color: #888; }
         
+        /* สไตล์สำหรับตัวเลือก Dropdown */
+        option { background: #222; color: #fff; }
+
         .btn-main { background: linear-gradient(90deg, #00c6ff, #0072ff); border: none; height: 55px; font-size: 1.2rem; font-weight: 700; color: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4); }
         .nav-pills .nav-link { background: #222; color: #aaa; border-radius: 10px; margin: 0 2px; }
         .nav-pills .nav-link.active { background: #6200ea; color: #fff; font-weight: bold; }
@@ -94,7 +97,8 @@
 
 <div class="container">
     <div class="user-container">
-        <h4 class="text-center mb-4 fw-bold">✨ ระบบจองโต๊ะ <span style="color:#ffeb3b">สรรพยาฯ</span></h4>
+        <h4 class="text-center mb-0 fw-bold">✨ ระบบจองโต๊ะ <span style="color:#ffeb3b">สรรพยาฯ</span></h4>
+        <h5 class="text-center mb-4 fw-light text-muted" style="font-size: 1rem;">โพ-ออก เฟสติวัล</h5>
 
         <ul class="nav nav-pills nav-fill mb-4">
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#create">📝 จอง</button></li>
@@ -290,8 +294,8 @@
         const zonePrefix = document.querySelector('input[name="zoneOption"]:checked').value;
         const name = document.getElementById('custName').value;
         const phone = document.getElementById('custPhone').value;
-        const payMethod = document.getElementById('paymentMethod').value; 
-        const payRef = document.getElementById('paymentRef').value; 
+        const payMethod = document.getElementById('paymentMethod').value; // รับค่าการชำระ
+        const payRef = document.getElementById('paymentRef').value; // รับค่าหมายเหตุ
 
         if(!name) return alert("❌ กรุณาใส่ชื่อลูกค้า");
         
@@ -307,6 +311,7 @@
 
             btn.innerText = "⏳ กำลังบันทึก...";
             
+            // บันทึกข้อมูลลง Firestore (รวม paymentMethod และ paymentRef)
             const docRef = await addDoc(collection(db, "bookings"), {
                 name, phone, table: autoTableNo, 
                 paymentMethod: payMethod, paymentRef: payRef, 
@@ -434,6 +439,7 @@
                 const rowClass = d.status === 'used' ? 'table-active' : '';
                 const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
 
+                // เพิ่มการแสดงผล การชำระ และ หมายเหตุ ที่หน้า Admin
                 const payInfo = `
                     <span class="badge bg-info text-dark">${d.paymentMethod || 'ไม่ระบุ'}</span><br>
                     <small class="text-muted fst-italic">${d.paymentRef || ''}</small>
