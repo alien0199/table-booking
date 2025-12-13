@@ -37,8 +37,8 @@
         .table-badge { font-size: 48px; font-weight: 700; background: #ffeb3b; color: #000; padding: 0px 40px; border-radius: 15px; box-shadow: 0 5px 10px rgba(0,0,0,0.3); margin-top: 5px; display: inline-block; }
         .footer-note { margin-top: 20px; font-size: 14px; opacity: 0.9; font-weight: 300; }
 
-        .form-control, .form-select { background: #222; border: 1px solid #444; color: #fff; border-radius: 12px; height: 50px; font-size: 1.1rem; text-align: center; }
-        .form-control:focus, .form-select:focus { background: #333; color: #fff; border-color: #6200ea; box-shadow: none; }
+        .form-control { background: #222; border: 1px solid #444; color: #fff; border-radius: 12px; height: 50px; font-size: 1.1rem; text-align: center; }
+        .form-control:focus { background: #333; color: #fff; border-color: #6200ea; box-shadow: none; }
         .btn-main { background: linear-gradient(90deg, #00c6ff, #0072ff); border: none; height: 55px; font-size: 1.2rem; font-weight: 700; color: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4); }
         .nav-pills .nav-link { background: #222; color: #aaa; border-radius: 10px; margin: 0 2px; }
         .nav-pills .nav-link.active { background: #6200ea; color: #fff; font-weight: bold; }
@@ -47,10 +47,28 @@
         .status-booked { border-bottom: 4px solid #ffc107; }
         .status-used { border-bottom: 4px solid #2ecc71; opacity: 0.7; }
         
-        /* สไตล์ตารางแอดมิน */
         .table-custom { background-color: #1a1a1a; color: #fff; font-size: 0.9rem; }
         .table-custom th { background-color: #333; color: #ffeb3b; }
         .table-custom td { vertical-align: middle; color: #ddd; }
+
+        /* สไตล์ปุ่มเลือกโซนแบบใหม่ */
+        .btn-check:checked + .btn-vip {
+            background-color: #ffc107; color: #000; border-color: #ffc107;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+        }
+        .btn-vip {
+            border: 2px solid #ffc107; color: #ffc107; background: transparent;
+            transition: all 0.2s;
+        }
+        
+        .btn-check:checked + .btn-vvip {
+            background-color: #d63384; color: #fff; border-color: #d63384;
+            box-shadow: 0 0 15px rgba(214, 51, 132, 0.5);
+        }
+        .btn-vvip {
+            border: 2px solid #d63384; color: #d63384; background: transparent;
+            transition: all 0.2s;
+        }
     </style>
 </head>
 <body>
@@ -72,12 +90,19 @@
             <div class="user-container">
                 <div class="card p-4 border-0 shadow mb-4" style="background: #151515; border-radius: 20px;">
                     
-                    <div class="mb-3">
-                        <label class="text-secondary small mb-1">เลือกชุดโต๊ะ (ระบบจะรันเลขให้อัตโนมัติ)</label>
-                        <select id="zoneSelect" class="form-select mb-3">
-                            <option value="VIP">ชุดที่ 1 (เริ่ม VIP001)</option>
-                            <option value="A">ชุดที่ 2 (เริ่ม A001)</option>
-                        </select>
+                    <div class="mb-4">
+                        <label class="text-white-50 small mb-2">เลือกชุดโต๊ะ (แตะเพื่อเลือก)</label>
+                        <div class="d-flex gap-2">
+                            <input type="radio" class="btn-check" name="zoneOption" id="optVIP" value="VIP" checked>
+                            <label class="btn btn-vip w-50 py-3 fw-bold rounded-3" for="optVIP">
+                                🎫 VIP (ชุด 1)<br><small style="font-size:0.7rem; opacity:0.8;">เริ่ม VIP001</small>
+                            </label>
+
+                            <input type="radio" class="btn-check" name="zoneOption" id="optVVIP" value="VVIP">
+                            <label class="btn btn-vvip w-50 py-3 fw-bold rounded-3" for="optVVIP">
+                                👑 VVIP (ชุด 2)<br><small style="font-size:0.7rem; opacity:0.8;">เริ่ม VVIP001</small>
+                            </label>
+                        </div>
                     </div>
 
                     <input type="text" id="custName" class="form-control mb-3" placeholder="ชื่อลูกค้า">
@@ -198,17 +223,14 @@
         });
     }
 
-    // --- ฟังก์ชันคำนวณเลขคิวถัดไป (Gap Filling) ---
     async function getNextQueue(prefix) {
         const q = query(collection(db, "bookings"));
         const snapshot = await getDocs(q);
         
-        // 1. ดึงเลขคิวที่มีอยู่แล้วเฉพาะโซนนี้
         let existingNumbers = [];
         snapshot.forEach(doc => {
-            const t = doc.data().table; // เช่น "VIP001"
+            const t = doc.data().table; 
             if (t.startsWith(prefix)) {
-                // ตัด prefix ออกเหลือแต่เลข แล้วแปลงเป็น int
                 const numPart = parseInt(t.replace(prefix, ''));
                 if (!isNaN(numPart)) {
                     existingNumbers.push(numPart);
@@ -216,28 +238,23 @@
             }
         });
 
-        // 2. เรียงลำดับจากน้อยไปมาก
         existingNumbers.sort((a, b) => a - b);
-
-        // 3. หา "ช่องว่าง" (Gap)
         let nextNum = 1;
         for (let num of existingNumbers) {
             if (num === nextNum) {
                 nextNum++;
             } else if (num > nextNum) {
-                // เจอช่องว่าง! (เช่น มี 1, 2, 4 -> num คือ 4 แต่ nextNum คือ 3 -> เจอช่องว่างที่ 3)
                 break; 
             }
         }
-
-        // 4. คืนค่ารูปแบบ 3 หลัก (001, 002...)
         return prefix + String(nextNum).padStart(3, '0');
     }
 
-    // --- 1. สร้างการจอง (Auto Queue) ---
+    // --- 1. สร้างการจอง (แก้ให้รับค่าจากปุ่ม Radio) ---
     window.addBooking = async () => {
         const btn = document.getElementById('btnSave');
-        const zonePrefix = document.getElementById('zoneSelect').value; // VIP หรือ A
+        // ใช้ querySelector หาค่า Radio ที่ถูกเลือก
+        const zonePrefix = document.querySelector('input[name="zoneOption"]:checked').value;
         const name = document.getElementById('custName').value;
         const phone = document.getElementById('custPhone').value;
         const payRef = document.getElementById('paymentRef').value;
@@ -247,10 +264,8 @@
         btn.disabled = true; btn.innerText = "⏳ กำลังคำนวณคิว...";
 
         try {
-            // เรียกฟังก์ชันหาเลขคิว (รวมถึงการเติมช่องว่างที่ถูกยกเลิก)
             const autoTableNo = await getNextQueue(zonePrefix);
 
-            // แจ้งเตือนยืนยันก่อนบันทึก
             if(!confirm(`ระบบจัดคิวให้ที่โต๊ะ: ${autoTableNo}\nยืนยันการจองไหมครับ?`)) {
                 btn.disabled = false; btn.innerText = "✅ รันคิวและยืนยัน";
                 return;
@@ -303,11 +318,13 @@
             const isUsed = d.status === 'used';
             const statusClass = isUsed ? 'status-used' : 'status-booked';
             const statusText = isUsed ? '🟢 มาแล้ว' : '🟡 จอง';
+            // เพิ่มสีแยกโซนในการ์ดสถานะด้วย
+            const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
             
             display.innerHTML += `
                 <div class="col-4 col-sm-4">
                     <div class="status-card p-2 text-center ${statusClass}">
-                        <h4 class="fw-bold mb-0 text-white">${d.table}</h4>
+                        <h4 class="fw-bold mb-0" style="color:${zoneColor}">${d.table}</h4>
                         <small class="d-block text-truncate text-secondary" style="font-size:0.8rem;">${d.name}</small>
                         <span class="badge bg-dark mt-1" style="font-size:0.7rem;">${statusText}</span>
                     </div>
@@ -363,7 +380,7 @@
         list.innerHTML = "<tr><td colspan='4' class='text-center'>⏳ กำลังโหลด...</td></tr>";
         
         try {
-            const q = query(collection(db, "bookings"), orderBy("table", "asc")); // เรียงตามเลขโต๊ะ จะได้เช็ค gap ง่ายๆ
+            const q = query(collection(db, "bookings"), orderBy("table", "asc"));
             const snapshot = await getDocs(q);
             list.innerHTML = "";
             
@@ -380,10 +397,11 @@
                     ? `<span class="badge bg-success">เข้า ${checkInTime}</span>` 
                     : `<span class="badge bg-warning text-dark">จอง ${bookedTime}</span>`;
                 const rowClass = d.status === 'used' ? 'table-active' : '';
+                const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
 
                 list.innerHTML += `
                     <tr class="${rowClass}">
-                        <td class="fw-bold text-warning" style="font-size:1.1rem;">${d.table}</td>
+                        <td class="fw-bold" style="font-size:1.1rem; color:${zoneColor}">${d.table}</td>
                         <td class="text-start">
                             <div>${d.name}</div>
                             <small class="text-muted">${d.phone || ''}</small>
