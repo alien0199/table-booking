@@ -63,12 +63,37 @@
         .status-booked { border-bottom: 4px solid #ffc107; }
         .status-used { border-bottom: 4px solid #2ecc71; opacity: 0.7; }
         
-        /* ตาราง Admin แบบเต็มจอ */
-        .admin-table-container { overflow-x: auto; }
-        .table-custom { background-color: #1a1a1a; color: #fff; font-size: 0.85rem; width: 100%; white-space: nowrap; }
-        .table-custom th { background-color: #333; color: #ffeb3b; padding: 10px; }
-        .table-custom td { vertical-align: middle; color: #ddd; padding: 10px; border-bottom: 1px solid #333; }
-
+        /* --- ปรับแต่งตาราง Admin (พื้นขาว-ตัวหนังสือดำ) --- */
+        .admin-table-container { 
+            overflow-x: auto; 
+            background: white; 
+            border-radius: 10px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .table-custom { 
+            background-color: #ffffff; /* พื้นหลังขาว */
+            color: #000000; /* ตัวหนังสือดำ */
+            font-size: 0.9rem; 
+            width: 100%; 
+            white-space: nowrap; 
+            margin-bottom: 0;
+        }
+        .table-custom th { 
+            background-color: #212529; /* หัวตารางสีดำ */
+            color: #ffeb3b; /* ตัวหนังสือหัวตารางสีเหลือง */
+            padding: 15px; 
+            font-weight: 600;
+        }
+        .table-custom td { 
+            vertical-align: middle; 
+            color: #000000; /* บังคับตัวหนังสือในตารางเป็นสีดำ */
+            padding: 12px 15px; 
+            border-bottom: 1px solid #dee2e6; /* เส้นขอบสีเทาอ่อน */
+        }
+        /* บังคับตัวหนังสือรองให้เป็นสีเทาเข้ม อ่านง่าย */
+        .table-custom .text-muted { color: #555 !important; }
+        
+        /* สไตล์ปุ่มเลือกโซน */
         .btn-check:checked + .btn-vip { background-color: #ffc107; color: #000; border-color: #ffc107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
         .btn-vip { border: 2px solid #ffc107; color: #ffc107; background: transparent; transition: all 0.2s; }
         
@@ -181,12 +206,13 @@
                 <button onclick="loadBookingsAdmin()" class="btn btn-info w-100 mb-3"><i class="bi bi-arrow-clockwise"></i> โหลดข้อมูลล่าสุด</button>
                 
                 <div class="admin-table-container">
-                    <table class="table table-custom table-bordered">
+                    <table class="table table-custom">
                         <thead>
                             <tr>
                                 <th>โต๊ะ</th>
                                 <th>ลูกค้า</th>
-                                <th>📅 วันเวลาจอง</th> <th>การชำระ</th>
+                                <th>📅 วันเวลาจอง</th>
+                                <th>การชำระ</th>
                                 <th>สถานะ</th>
                                 <th>จัดการ</th>
                             </tr>
@@ -405,7 +431,7 @@
 
     window.loadBookingsAdmin = async () => {
         const list = document.getElementById('adminList');
-        list.innerHTML = "<tr><td colspan='6' class='text-center'>⏳ กำลังโหลด...</td></tr>";
+        list.innerHTML = "<tr><td colspan='6' class='text-center text-dark'>⏳ กำลังโหลด...</td></tr>";
         
         try {
             const q = query(collection(db, "bookings"), orderBy("table", "asc"));
@@ -413,7 +439,7 @@
             list.innerHTML = "";
             
             if(snapshot.empty) {
-                list.innerHTML = "<tr><td colspan='6' class='text-center'>- ว่าง -</td></tr>";
+                list.innerHTML = "<tr><td colspan='6' class='text-center text-muted'>- ว่าง -</td></tr>";
                 return;
             }
 
@@ -433,25 +459,25 @@
                     <small class="text-muted fst-italic">${d.paymentRef || '-'}</small>
                 `;
 
-                // สถานะและวันที่เข้างาน
+                // สถานะและวันที่เข้างาน (ตัวหนังสือดำ)
                 let statusDisplay = `<span class="badge bg-warning text-dark">รอเข้างาน</span>`;
                 if(d.status === 'used') {
-                    statusDisplay = `<span class="badge bg-success">✅ เข้าแล้ว</span><br><small class="text-white-50">${checkInTime || ''}</small>`;
+                    statusDisplay = `<span class="badge bg-success">✅ เข้าแล้ว</span><br><small class="text-dark fw-bold">${checkInTime || ''}</small>`;
                 }
 
                 list.innerHTML += `
                     <tr class="${rowClass}">
                         <td class="fw-bold" style="font-size:1.1rem; color:${zoneColor}">${d.table}</td>
-                        <td class="text-start">
-                            <div>${d.name}</div>
+                        <td class="text-start text-dark">
+                            <div class="fw-bold">${d.name}</div>
                             <small class="text-muted">${d.phone || ''}</small>
                         </td>
-                        <td>${bookedTime}</td>
+                        <td class="text-dark fw-bold">${bookedTime}</td>
                         <td>${payInfo}</td>
                         <td>${statusDisplay}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <button class="btn btn-outline-light" onclick="showQr('${doc.id}')">QR</button>
+                                <button class="btn btn-outline-dark" onclick="showQr('${doc.id}')">QR</button>
                                 <button class="btn btn-outline-danger" onclick="del('${doc.id}')">ลบ</button>
                             </div>
                         </td>
