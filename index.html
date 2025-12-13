@@ -12,26 +12,11 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap');
 
-        body { font-family: 'Kanit', sans-serif; background-color: #050505; color: #fff; padding-bottom: 80px; position: relative; min-height: 100vh; }
-        .container { max-width: 450px; margin-top: 15px; padding-bottom: 40px; }
+        /* ลบ padding-bottom ของ footer ออก */
+        body { font-family: 'Kanit', sans-serif; background-color: #050505; color: #fff; padding-bottom: 20px; position: relative; min-height: 100vh; }
+        .container { max-width: 450px; margin-top: 15px; padding-bottom: 20px; }
         .hidden { display: none !important; }
         
-        /* Footer ด้านล่างสุด */
-        .footer-brand {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            padding: 10px;
-            background: #000;
-            color: #ffeb3b;
-            font-weight: 700;
-            font-size: 1.1rem;
-            border-top: 1px solid #222;
-            z-index: 1000;
-        }
-
         /* การ์ดบัตรจอง */
         .ticket-card {
             background: linear-gradient(135deg, #6200ea 0%, #b388ff 100%);
@@ -83,7 +68,6 @@
         .table-custom th { background-color: #333; color: #ffeb3b; }
         .table-custom td { vertical-align: middle; color: #ddd; }
 
-        /* สไตล์ปุ่มเลือกโซน */
         .btn-check:checked + .btn-vip { background-color: #ffc107; color: #000; border-color: #ffc107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
         .btn-vip { border: 2px solid #ffc107; color: #ffc107; background: transparent; transition: all 0.2s; }
         
@@ -94,10 +78,11 @@
 <body>
 
 <div class="container">
-    <div class="user-container">
-        <h4 class="text-center mb-4 fw-bold">✨ ระบบจองโต๊ะ <span style="color:#ffeb3b">สรรพยาฯ</span></h4>
+    <div class="user-container text-center mb-4">
+        <h4 class="fw-bold mb-0">✨ ระบบจองโต๊ะ <span style="color:#ffeb3b">สรรพยาฯ</span></h4>
+        <h5 class="fw-bold mt-1" style="color: #ffeb3b; text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);">โพ-ออก เฟสติวัล</h5>
 
-        <ul class="nav nav-pills nav-fill mb-4">
+        <ul class="nav nav-pills nav-fill mt-4">
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#create">📝 จอง</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#status" onclick="loadTableStatus()">📊 สถานะ</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#scan">📷 สแกน</button></li>
@@ -211,10 +196,6 @@
             </div>
         </div>
     </div>
-</div>
-
-<div class="footer-brand">
-    โพ-ออก เฟสติวัล
 </div>
 
 <div class="modal fade" id="qrModal" tabindex="-1">
@@ -436,6 +417,7 @@
                 const rowClass = d.status === 'used' ? 'table-active' : '';
                 const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
 
+                // แสดงผลการชำระเงินในตารางแอดมิน
                 const payBadge = d.paymentMethod === 'เงินสด' 
                     ? '<span class="badge bg-success">💵 เงินสด</span>' 
                     : '<span class="badge bg-primary">🏦 โอน</span>';
