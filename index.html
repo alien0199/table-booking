@@ -16,7 +16,7 @@
         .container { max-width: 450px; margin-top: 15px; padding-bottom: 20px; }
         .hidden { display: none !important; }
         
-        /* การ์ดบัตรจอง (ใช้ร่วมกันทั้งตอนจองและดูย้อนหลัง) */
+        /* การ์ดบัตรจอง */
         .ticket-card {
             background: linear-gradient(135deg, #6200ea 0%, #b388ff 100%);
             border-radius: 25px;
@@ -32,7 +32,6 @@
         .event-sub { font-size: 24px; color: #ffeb3b; font-weight: 700; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); margin-bottom: 20px; }
         .ticket-header { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.6); padding: 5px 25px; border-radius: 50px; font-size: 16px; margin-bottom: 25px; backdrop-filter: blur(5px); }
         
-        /* QR Code ตรงกลาง */
         .qr-bg { background: #fff; padding: 15px; border-radius: 15px; margin: 0 auto 20px auto; width: 210px; height: 210px; display: flex; align-items: center; justify-content: center; }
         #qrcodeDisplay img, #modalQrcodeDisplay img { display: block; margin: 0 auto; }
         
@@ -49,13 +48,12 @@
         .status-card { 
             background: #222; border-radius: 12px; border: 1px solid #333; transition: all 0.2s; cursor: pointer; 
         }
-        .status-card:active { transform: scale(0.95); border-color: #fff; } /* เอฟเฟกต์เวลากด */
+        .status-card:active { transform: scale(0.95); border-color: #fff; }
         
         .status-booked { border-bottom: 4px solid #ffc107; }
         .status-partial { border-bottom: 4px solid #fd7e14; }
         .status-full { border-bottom: 4px solid #2ecc71; opacity: 0.7; }
         
-        /* Modal Overlay */
         .custom-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 9999;
@@ -168,7 +166,16 @@
                 <button onclick="loadBookingsAdmin()" class="btn btn-info w-100 mb-3"><i class="bi bi-arrow-clockwise"></i> โหลดข้อมูลล่าสุด</button>
                 <div class="admin-table-container">
                     <table class="table table-custom">
-                        <thead><tr><th>โต๊ะ</th><th>ลูกค้า</th><th>📅 จองเมื่อ</th><th>การชำระ</th><th>จำนวนเข้า</th><th>จัดการ</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>โต๊ะ</th>
+                                <th>ลูกค้า</th>
+                                <th>📅 จอง</th>
+                                <th>⏰ เข้าล่าสุด</th> <th>การชำระ</th>
+                                <th>เข้า</th>
+                                <th>จัดการ</th>
+                            </tr>
+                        </thead>
                         <tbody id="adminList"></tbody>
                     </table>
                 </div>
@@ -223,9 +230,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    // ยังคง import ไว้เพื่อความชัวร์ แต่ไม่ได้ใช้งานแล้ว
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-
+    
     const firebaseConfig = {
       apiKey: "AIzaSyD3s78zRwEHU5WAiSQIg78ZxWbS5QjXYws",
       authDomain: "my-booking-table-855b0.firebaseapp.com",
@@ -239,7 +244,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
-    // const storage = getStorage(app); // ไม่ได้ใช้แล้ว
     
     let html5QrcodeScanner = null;
     let qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
@@ -272,8 +276,6 @@
         return prefix + String(nextNum).padStart(3, '0');
     }
 
-    // ลบฟังก์ชัน toggleSlipInput ออก เพราะไม่ใช้แล้ว
-
     window.addBooking = async () => {
         const btn = document.getElementById('btnSave');
         const zonePrefix = document.querySelector('input[name="zoneOption"]:checked').value;
@@ -281,7 +283,6 @@
         const phone = document.getElementById('custPhone').value;
         const payMethod = document.getElementById('paymentMethod').value; 
         const payRef = document.getElementById('paymentRef').value; 
-        // ลบตัวแปร slipFile ออก
 
         if(!name) return alert("❌ กรุณาใส่ชื่อลูกค้า");
         
@@ -290,14 +291,12 @@
         try {
             const autoTableNo = await getNextQueue(zonePrefix);
             
-            // ลบโค้ดส่วนอัปโหลดรูป (uploadBytes) ออกทั้งหมด
-            
             const docRef = await addDoc(collection(db, "bookings"), {
                 name, phone, table: autoTableNo, 
                 paymentMethod: payMethod, paymentRef: payRef, 
-                // ไม่ส่ง slipUrl ไปแล้ว
                 status: "booked", pax: 0, maxPax: 4, 
-                createdAt: serverTimestamp()
+                createdAt: serverTimestamp(),
+                checkInTime: null // เริ่มต้นยังไม่มีคนเข้า
             });
 
             document.getElementById('ticketResult').classList.remove('hidden');
@@ -319,7 +318,6 @@
         document.getElementById('custName').value = '';
         document.getElementById('custPhone').value = '';
         document.getElementById('paymentRef').value = '';
-        // document.getElementById('slipFile').value = ''; // ลบออก
         document.getElementById('ticketResult').classList.add('hidden');
         document.getElementById('qrcodeDisplay').innerHTML = "";
     };
@@ -441,7 +439,7 @@
             await updateDoc(currentScanDoc, { 
                 pax: newPax, 
                 status: newPax >= maxPax ? 'used' : 'active',
-                checkInTime: serverTimestamp() 
+                checkInTime: serverTimestamp() // บันทึกเวลาเข้าล่าสุดทุกครั้ง
             });
             document.getElementById('scanModal').classList.add('hidden');
             document.getElementById('scanResult').innerHTML = `<h3 class='text-success fw-bold'>✅ บันทึกแล้ว!</h3>เข้า ${amount} คน (รวม ${newPax}/${maxPax})`;
@@ -474,7 +472,7 @@
 
     window.loadBookingsAdmin = async () => {
         const list = document.getElementById('adminList');
-        list.innerHTML = "<tr><td colspan='6' class='text-center text-dark'>⏳ กำลังโหลด...</td></tr>";
+        list.innerHTML = "<tr><td colspan='7' class='text-center text-dark'>⏳ กำลังโหลด...</td></tr>";
         
         try {
             const q = query(collection(db, "bookings"), orderBy("table", "asc"));
@@ -482,17 +480,18 @@
             list.innerHTML = "";
             
             if(snapshot.empty) {
-                list.innerHTML = "<tr><td colspan='6' class='text-center text-muted'>- ว่าง -</td></tr>";
+                list.innerHTML = "<tr><td colspan='7' class='text-center text-muted'>- ว่าง -</td></tr>";
                 return;
             }
 
             snapshot.forEach((doc) => {
                 const d = doc.data();
                 const bookedTime = formatThaiDate(d.createdAt);
+                // จัดการเวลาเช็คอิน ถ้าไม่มีค่าจะขึ้นขีด -
+                const checkInTime = d.checkInTime ? `<span class="text-primary fw-bold">${formatThaiDate(d.checkInTime)}</span>` : '<span class="text-muted">-</span>';
+                
                 const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
                 const payBadge = d.paymentMethod === 'เงินสด' ? '<span class="badge bg-success">💵 เงินสด</span>' : '<span class="badge bg-primary">🏦 โอน</span>';
-                
-                // ลบส่วนแสดงปุ่มกดดูสลิปออก
                 const payInfo = `${payBadge}<br><small class="text-muted fst-italic">${d.paymentRef || '-'}</small>`;
 
                 const currentPax = d.pax || 0;
@@ -508,8 +507,8 @@
                             <div class="fw-bold">${d.name}</div>
                             <small class="text-muted">${d.phone || ''}</small>
                         </td>
-                        <td class="text-dark fw-bold">${bookedTime}</td>
-                        <td class="text-dark">${payInfo}</td>
+                        <td class="text-dark"><small>${bookedTime}</small></td>
+                        <td class="text-dark"><small>${checkInTime}</small></td> <td class="text-dark">${payInfo}</td>
                         <td>${paxBadge}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
