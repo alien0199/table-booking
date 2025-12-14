@@ -117,7 +117,7 @@
         <h2 style="color:#ffeb3b; font-weight:bold; margin-bottom:0;">🔒 จำกัดสิทธิ์</h2>
         <p class="text-secondary small">สำหรับเจ้าหน้าที่เท่านั้น</p>
         
-        <input type="password" id="accessPass" class="gate-input" placeholder="รหัสผ่าน" inputmode="numeric" autocomplete="off" name="gate_code_unique">
+        <input type="password" id="accessPass" class="gate-input" placeholder="รหัสผ่าน" inputmode="numeric">
         
         <button onclick="checkAccess()" class="btn btn-primary w-100 py-3 rounded-pill fw-bold fs-5">เข้าใช้งาน</button>
         <p id="gateError" class="text-danger mt-3 small hidden">❌ รหัสผ่านไม่ถูกต้อง</p>
@@ -324,7 +324,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    const ACCESS_PASSWORD = "9999"; // <<-- แก้ไขรหัสผ่านตรงนี้
+    const ACCESS_PASSWORD = "089050"; // <<-- แก้ไขรหัสผ่านตรงนี้
     const STORAGE_KEY = "sapphaya_event_access";
 
     function checkAccess() {
