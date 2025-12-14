@@ -6,6 +6,8 @@
     <title>ระบบรันคิวโต๊ะ - สรรพยา เฟสติวัล</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
@@ -193,7 +195,20 @@
                     <span class="h4">จัดการข้อมูล (Admin)</span>
                     <button onclick="logout()" class="btn btn-sm btn-danger">ออกจากระบบ</button>
                 </div>
-                <button onclick="loadBookingsAdmin()" class="btn btn-info w-100 mb-3"><i class="bi bi-arrow-clockwise"></i> โหลดข้อมูลล่าสุด</button>
+                
+                <div class="row g-2 mb-3">
+                    <div class="col-8">
+                        <button onclick="loadBookingsAdmin()" class="btn btn-info w-100 fw-bold">
+                            <i class="bi bi-arrow-clockwise"></i> โหลดข้อมูลล่าสุด
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <button onclick="exportToCSV()" class="btn btn-success w-100 fw-bold">
+                            📂 Export
+                        </button>
+                    </div>
+                </div>
+
                 <div class="admin-table-container">
                     <table class="table table-custom">
                         <thead><tr><th>โต๊ะ</th><th>ลูกค้า</th><th>📅 จองเมื่อ</th><th>การชำระ</th><th>จำนวนเข้า</th><th>จัดการ</th></tr></thead>
@@ -297,7 +312,7 @@
     
     let html5QrcodeScanner = null;
     let qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
-    let editModal = new bootstrap.Modal(document.getElementById('editModal')); // เพิ่มตัวแปร modal แก้ไข
+    let editModal = new bootstrap.Modal(document.getElementById('editModal')); 
     let currentScanDoc = null;
     let currentScanData = null;
 
@@ -374,7 +389,7 @@
         document.getElementById('qrcodeDisplay').innerHTML = "";
     };
 
-    // --- ส่วนแสดงสถานะ (ปรับปรุง: เพิ่มยอดรวม) ---
+    // --- ส่วนแสดงสถานะ ---
     window.loadTableStatus = async () => {
         const display = document.getElementById('statusList');
         display.innerHTML = "<div class='text-center text-white'>⏳ กำลังโหลด...</div>";
@@ -384,7 +399,6 @@
         
         if(snapshot.empty) { display.innerHTML = "<div class='text-center text-muted'>ยังไม่มีการจอง</div>"; return; }
 
-        // ส่วนที่เพิ่ม: แสดงยอดรวมการจอง
         const totalBooked = snapshot.size;
         display.innerHTML += `
             <div class="col-12 text-center mb-3">
@@ -420,11 +434,9 @@
                 </div>`;
         });
         
-        // Clear search box when reloading
         if(document.getElementById('searchInput')) document.getElementById('searchInput').value = '';
     };
 
-    // --- ฟังก์ชันค้นหา (เพิ่มใหม่) ---
     window.filterStatus = () => {
         const input = document.getElementById('searchInput');
         const filter = input.value.toUpperCase();
@@ -543,7 +555,7 @@
     window.closeScanModal = window.closeScanModal;
     window.openTicketModal = window.openTicketModal;
     window.closeTicketModal = window.closeTicketModal;
-    window.filterStatus = window.filterStatus; // Export search function
+    window.filterStatus = window.filterStatus;
 
     window.login = () => {
         signInWithEmailAndPassword(auth, document.getElementById('adminEmail').value, document.getElementById('adminPass').value)
@@ -555,7 +567,7 @@
         document.getElementById('adminContent').classList.toggle('hidden', !user);
     });
 
-    // --- ส่วน Admin (ปรับปรุง: เพิ่มปุ่มแก้ไข) ---
+    // --- ส่วน Admin ---
     window.loadBookingsAdmin = async () => {
         const list = document.getElementById('adminList');
         list.innerHTML = "<tr><td colspan='6' class='text-center text-dark'>⏳ กำลังโหลด...</td></tr>";
@@ -584,8 +596,6 @@
                 if(currentPax >= maxPax) paxBadge = `<span class="badge bg-success">ครบ (${currentPax}/${maxPax})</span>`;
                 else if(currentPax > 0) paxBadge = `<span class="badge bg-info text-dark">บางส่วน (${currentPax}/${maxPax})</span>`;
 
-                // ส่วนที่เพิ่ม: ปุ่มแก้ไข (OpenEdit)
-                // ต้อง escape single quote ใน string ให้ดี
                 const safeName = (d.name || '').replace(/'/g, "\\'");
                 const safeRef = (d.paymentRef || '').replace(/'/g, "\\'");
 
@@ -611,7 +621,6 @@
         } catch(e) { console.error(e); }
     };
 
-    // --- ฟังก์ชันแก้ไขข้อมูล (เพิ่มใหม่) ---
     window.openEdit = (id, name, phone, ref) => {
         document.getElementById('editDocId').value = id;
         document.getElementById('editName').value = name;
@@ -635,7 +644,7 @@
                 paymentRef: ref
             });
             editModal.hide();
-            loadBookingsAdmin(); // รีโหลดตาราง
+            loadBookingsAdmin(); 
             alert("✅ แก้ไขข้อมูลเรียบร้อย");
         } catch(e) {
             console.error(e);
@@ -655,9 +664,76 @@
             loadBookingsAdmin(); 
         }
     };
+
+    // --- ฟังก์ชัน Export CSV (เพิ่มใหม่) ---
+    window.exportToCSV = async () => {
+        const confirmExport = confirm("ต้องการดาวน์โหลดข้อมูลทั้งหมดไปทำบัญชีใช่หรือไม่?");
+        if (!confirmExport) return;
+
+        try {
+            const q = query(collection(db, "bookings"), orderBy("table", "asc"));
+            const snapshot = await getDocs(q);
+
+            if (snapshot.empty) { alert("ไม่มีข้อมูลให้ Export"); return; }
+
+            // เพิ่ม BOM \uFEFF เพื่อให้ Excel อ่านภาษาไทยออก
+            let csvContent = "\uFEFF"; 
+            csvContent += "Table No.,Customer Name,Phone,Payment Method,Ref/Note,Pax In,Pax Max,Status,Booking Time\n";
+
+            snapshot.forEach(doc => {
+                const d = doc.data();
+                // ตัดเครื่องหมาย , ออก เพื่อป้องกันไฟล์ CSV เพี้ยน
+                const cleanName = (d.name || "-").replace(/,/g, " ");
+                const cleanRef = (d.paymentRef || "-").replace(/,/g, " ");
+                const cleanPhone = (d.phone || "-").replace(/,/g, ""); 
+                
+                let dateStr = "-";
+                if (d.createdAt) {
+                    dateStr = d.createdAt.toDate().toLocaleString('th-TH', {
+                        year: 'numeric', month: '2-digit', day: '2-digit', 
+                        hour: '2-digit', minute: '2-digit', second: '2-digit'
+                    });
+                }
+
+                // ใส่ "..." ครอบข้อมูลเพื่อความปลอดภัย
+                const row = [
+                    `"${d.table}"`,
+                    `"${cleanName}"`,
+                    `"${cleanPhone}"`,
+                    `"${d.paymentMethod}"`,
+                    `"${cleanRef}"`,
+                    d.pax || 0,
+                    d.maxPax || 4,
+                    `"${d.status}"`,
+                    `"${dateStr}"`
+                ];
+                
+                csvContent += row.join(",") + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const fileName = `booking_report_${new Date().toISOString().slice(0,10)}.csv`;
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", fileName);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+        } catch (e) {
+            console.error(e);
+            alert("Export Error: " + e.message);
+        }
+    };
     
-    window.del = window.del; window.showQr = window.showQr; 
-    window.openEdit = window.openEdit; window.saveEdit = window.saveEdit; // Export ฟังก์ชันใหม่
+    // Export ฟังก์ชันทั้งหมดสู่ภายนอก
+    window.del = window.del; 
+    window.showQr = window.showQr; 
+    window.openEdit = window.openEdit; 
+    window.saveEdit = window.saveEdit; 
+    window.exportToCSV = window.exportToCSV;
 </script>
 
 </body>
