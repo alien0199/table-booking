@@ -160,6 +160,10 @@
         <div class="tab-pane fade" id="status">
             <div class="user-container">
                 <button onclick="loadTableStatus()" class="btn btn-sm btn-secondary mb-3 w-100">🔄 รีเฟรชข้อมูล</button>
+                
+                <div class="mb-3">
+                    <input type="text" id="searchInput" class="form-control" placeholder="🔍 ค้นหาเลขโต๊ะ..." onkeyup="filterStatus()">
+                </div>
                 <div class="alert alert-info small text-center p-1 mb-2">ℹ️ แตะที่การ์ดเพื่อดูบัตรจอง</div>
                 <div id="statusList" class="row g-2"></div>
             </div>
@@ -407,14 +411,37 @@
             }
             
             display.innerHTML += `
-                <div class="col-4 col-sm-4" onclick="openTicketModal('${doc.id}', '${d.name}', '${d.table}')">
+                <div class="col-4 col-sm-4 table-card-item" onclick="openTicketModal('${doc.id}', '${d.name}', '${d.table}')">
                     <div class="status-card p-2 text-center ${statusClass}">
-                        <h4 class="fw-bold mb-0" style="color:${zoneColor}">${d.table}</h4>
+                        <h4 class="fw-bold mb-0 table-number-text" style="color:${zoneColor}">${d.table}</h4>
                         <small class="d-block text-truncate text-secondary" style="font-size:0.8rem;">${d.name}</small>
                         <span class="badge bg-dark mt-1" style="font-size:0.7rem;">${statusText}</span>
                     </div>
                 </div>`;
         });
+        
+        // Clear search box when reloading
+        if(document.getElementById('searchInput')) document.getElementById('searchInput').value = '';
+    };
+
+    // --- ฟังก์ชันค้นหา (เพิ่มใหม่) ---
+    window.filterStatus = () => {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toUpperCase();
+        const list = document.getElementById('statusList');
+        const items = list.getElementsByClassName('table-card-item');
+
+        for (let i = 0; i < items.length; i++) {
+            const h4 = items[i].getElementsByClassName("table-number-text")[0];
+            if (h4) {
+                const txtValue = h4.textContent || h4.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    items[i].classList.remove('hidden');
+                } else {
+                    items[i].classList.add('hidden');
+                }
+            }
+        }
     };
 
     window.openTicketModal = (docId, name, table) => {
@@ -516,6 +543,7 @@
     window.closeScanModal = window.closeScanModal;
     window.openTicketModal = window.openTicketModal;
     window.closeTicketModal = window.closeTicketModal;
+    window.filterStatus = window.filterStatus; // Export search function
 
     window.login = () => {
         signInWithEmailAndPassword(auth, document.getElementById('adminEmail').value, document.getElementById('adminPass').value)
