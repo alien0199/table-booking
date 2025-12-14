@@ -228,6 +228,36 @@
     </div>
 </div>
 
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white border-secondary">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title">✏️ แก้ไขข้อมูลจอง</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+         <input type="hidden" id="editDocId">
+         <div class="mb-3">
+             <label class="form-label text-warning">ชื่อลูกค้า</label>
+             <input type="text" id="editName" class="form-control text-start">
+         </div>
+         <div class="mb-3">
+             <label class="form-label text-warning">เบอร์โทร</label>
+             <input type="tel" id="editPhone" class="form-control text-start">
+         </div>
+         <div class="mb-3">
+             <label class="form-label text-warning">หมายเหตุ/การชำระ</label>
+             <input type="text" id="editRef" class="form-control text-start">
+         </div>
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" class="btn btn-success" onclick="saveEdit()">💾 บันทึกการแก้ไข</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="qrModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-dark text-white border-secondary">
@@ -246,9 +276,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    // เก็บ import ไว้ป้องกัน error แต่ไม่ได้ใช้จริงแล้ว
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-
+    
     const firebaseConfig = {
       apiKey: "AIzaSyD3s78zRwEHU5WAiSQIg78ZxWbS5QjXYws",
       authDomain: "my-booking-table-855b0.firebaseapp.com",
@@ -265,6 +293,7 @@
     
     let html5QrcodeScanner = null;
     let qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+    let editModal = new bootstrap.Modal(document.getElementById('editModal')); // เพิ่มตัวแปร modal แก้ไข
     let currentScanDoc = null;
     let currentScanData = null;
 
@@ -275,7 +304,6 @@
         });
     }
 
-    // --- ส่วนนี้คือระบบรันคิว (ห้ามแตะต้อง) ---
     async function getNextQueue(prefix) {
         const q = query(collection(db, "bookings"));
         const snapshot = await getDocs(q);
@@ -295,7 +323,6 @@
         return prefix + String(nextNum).padStart(3, '0');
     }
 
-    // --- ฟังก์ชันบันทึกการจอง (แก้ไขใหม่: ตัดส่วน upload slip ออก) ---
     window.addBooking = async () => {
         const btn = document.getElementById('btnSave');
         const zonePrefix = document.querySelector('input[name="zoneOption"]:checked').value;
@@ -309,12 +336,9 @@
         btn.disabled = true; btn.innerText = "⏳ กำลังประมวลผล...";
 
         try {
-            // คำนวณเลขโต๊ะ
             const autoTableNo = await getNextQueue(zonePrefix);
-            
             btn.innerText = "⏳ กำลังบันทึกข้อมูล...";
             
-            // บันทึกลง Firebase (ไม่มี field slipUrl แล้ว)
             const docRef = await addDoc(collection(db, "bookings"), {
                 name, phone, table: autoTableNo, 
                 paymentMethod: payMethod, paymentRef: payRef, 
@@ -322,7 +346,6 @@
                 createdAt: serverTimestamp()
             });
 
-            // สร้าง QR Code และแสดงผล
             document.getElementById('ticketResult').classList.remove('hidden');
             const qrContainer = document.getElementById("qrcodeDisplay");
             qrContainer.innerHTML = ""; 
@@ -347,7 +370,7 @@
         document.getElementById('qrcodeDisplay').innerHTML = "";
     };
 
-    // --- ส่วนแสดงสถานะ (ห้ามแตะต้อง) ---
+    // --- ส่วนแสดงสถานะ (ปรับปรุง: เพิ่มยอดรวม) ---
     window.loadTableStatus = async () => {
         const display = document.getElementById('statusList');
         display.innerHTML = "<div class='text-center text-white'>⏳ กำลังโหลด...</div>";
@@ -356,6 +379,16 @@
         display.innerHTML = "";
         
         if(snapshot.empty) { display.innerHTML = "<div class='text-center text-muted'>ยังไม่มีการจอง</div>"; return; }
+
+        // ส่วนที่เพิ่ม: แสดงยอดรวมการจอง
+        const totalBooked = snapshot.size;
+        display.innerHTML += `
+            <div class="col-12 text-center mb-3">
+                <span class="badge bg-primary fs-5 shadow px-4 py-2 rounded-pill">
+                    📊 จองแล้วทั้งหมด: <span class="text-warning fw-bold" style="font-size:1.4em;">${totalBooked}</span> โต๊ะ
+                </span>
+            </div>
+        `;
         
         snapshot.forEach((doc) => {
             const d = doc.data();
@@ -397,7 +430,6 @@
         document.getElementById('ticketModal').classList.add('hidden');
     };
 
-    // --- ส่วนสแกน QR (ห้ามแตะต้อง) ---
     window.startScanner = () => {
         document.getElementById('stopCamBtn').classList.remove('hidden');
         html5QrcodeScanner = new Html5Qrcode("reader");
@@ -485,7 +517,6 @@
     window.openTicketModal = window.openTicketModal;
     window.closeTicketModal = window.closeTicketModal;
 
-    // --- ส่วน Admin (แก้ไข: เอาปุ่มดูสลิปออก) ---
     window.login = () => {
         signInWithEmailAndPassword(auth, document.getElementById('adminEmail').value, document.getElementById('adminPass').value)
             .catch((e) => alert("Login Failed: " + e.message));
@@ -496,6 +527,7 @@
         document.getElementById('adminContent').classList.toggle('hidden', !user);
     });
 
+    // --- ส่วน Admin (ปรับปรุง: เพิ่มปุ่มแก้ไข) ---
     window.loadBookingsAdmin = async () => {
         const list = document.getElementById('adminList');
         list.innerHTML = "<tr><td colspan='6' class='text-center text-dark'>⏳ กำลังโหลด...</td></tr>";
@@ -516,7 +548,6 @@
                 const zoneColor = d.table.startsWith('VVIP') ? '#d63384' : '#ffc107';
                 const payBadge = d.paymentMethod === 'เงินสด' ? '<span class="badge bg-success">💵 เงินสด</span>' : '<span class="badge bg-primary">🏦 โอน</span>';
                 
-                // ไม่มีการแสดงปุ่มดูสลิปแล้ว
                 const payInfo = `${payBadge}<br><small class="text-muted fst-italic">${d.paymentRef || '-'}</small>`;
 
                 const currentPax = d.pax || 0;
@@ -524,6 +555,11 @@
                 let paxBadge = `<span class="badge bg-warning text-dark">รอ (${currentPax}/${maxPax})</span>`;
                 if(currentPax >= maxPax) paxBadge = `<span class="badge bg-success">ครบ (${currentPax}/${maxPax})</span>`;
                 else if(currentPax > 0) paxBadge = `<span class="badge bg-info text-dark">บางส่วน (${currentPax}/${maxPax})</span>`;
+
+                // ส่วนที่เพิ่ม: ปุ่มแก้ไข (OpenEdit)
+                // ต้อง escape single quote ใน string ให้ดี
+                const safeName = (d.name || '').replace(/'/g, "\\'");
+                const safeRef = (d.paymentRef || '').replace(/'/g, "\\'");
 
                 list.innerHTML += `
                     <tr>
@@ -537,6 +573,7 @@
                         <td>${paxBadge}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-warning text-dark" onclick="openEdit('${doc.id}', '${safeName}', '${d.phone || ''}', '${safeRef}')">✏️</button>
                                 <button class="btn btn-outline-dark" onclick="showQr('${doc.id}')">QR</button>
                                 <button class="btn btn-outline-danger" onclick="del('${doc.id}')">ลบ</button>
                             </div>
@@ -544,6 +581,38 @@
                     </tr>`;
             });
         } catch(e) { console.error(e); }
+    };
+
+    // --- ฟังก์ชันแก้ไขข้อมูล (เพิ่มใหม่) ---
+    window.openEdit = (id, name, phone, ref) => {
+        document.getElementById('editDocId').value = id;
+        document.getElementById('editName').value = name;
+        document.getElementById('editPhone').value = phone;
+        document.getElementById('editRef').value = ref;
+        editModal.show();
+    };
+
+    window.saveEdit = async () => {
+        const id = document.getElementById('editDocId').value;
+        const name = document.getElementById('editName').value;
+        const phone = document.getElementById('editPhone').value;
+        const ref = document.getElementById('editRef').value;
+
+        if(!name) return alert("กรุณาใส่ชื่อ");
+
+        try {
+            await updateDoc(doc(db, "bookings", id), {
+                name: name,
+                phone: phone,
+                paymentRef: ref
+            });
+            editModal.hide();
+            loadBookingsAdmin(); // รีโหลดตาราง
+            alert("✅ แก้ไขข้อมูลเรียบร้อย");
+        } catch(e) {
+            console.error(e);
+            alert("Error: " + e.message);
+        }
     };
     
     window.showQr = (id) => {
@@ -560,6 +629,7 @@
     };
     
     window.del = window.del; window.showQr = window.showQr; 
+    window.openEdit = window.openEdit; window.saveEdit = window.saveEdit; // Export ฟังก์ชันใหม่
 </script>
 
 </body>
