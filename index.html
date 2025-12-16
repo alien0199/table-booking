@@ -58,20 +58,25 @@
         
         .cust-name { font-size: 26px; font-weight: 700; margin-bottom: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
         
-        /* ปรับปรุง CSS ของ table-badge ให้รองรับการเปลี่ยนสีผ่าน JS ได้ง่ายขึ้น */
+        /* ป้ายเลขโต๊ะ (ใช้ร่วมกันทั้งหน้าจองและ Modal) */
         .table-badge { 
-            font-size: 48px; 
-            font-weight: 700; 
-            background: #ffeb3b; /* ค่าเริ่มต้น */
-            color: #000; 
-            padding: 0px 40px; 
-            border-radius: 15px; 
+            font-size: 48px; font-weight: 700; 
+            background: #ffeb3b; color: #000; 
+            padding: 0px 40px; border-radius: 15px; 
             box-shadow: 0 5px 10px rgba(0,0,0,0.3); 
-            margin-top: 5px; 
-            display: inline-block; 
-            transition: all 0.3s ease; /* เพิ่ม Transition ให้นุ่มนวล */
+            margin-top: 5px; display: inline-block; 
+            transition: all 0.3s ease;
         }
         
+        /* เพิ่ม: ป้ายเลขโต๊ะขนาดเล็กสำหรับหน้าสถานะ */
+        .table-badge-mini {
+            font-size: 1.5rem; font-weight: 800;
+            padding: 5px 15px; border-radius: 8px;
+            display: inline-block; width: 100%;
+            margin-bottom: 5px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+
         .footer-note { margin-top: 20px; font-size: 14px; opacity: 0.9; font-weight: 300; }
 
         /* Input Style */
@@ -415,13 +420,13 @@
         });
     }
 
-    // ฟังก์ชันใหม่: เพื่อดึงสีตามโซน (A=แดง, B=ฟ้า, C=เขียว, D=ส้ม)
+    // ฟังก์ชัน Theme สี (แดง, ฟ้า, เขียว, ส้ม)
     function getZoneTheme(tableNo) {
-        if(tableNo.startsWith('A')) return { bg: '#dc3545', text: '#fff' }; // สีแดง
-        if(tableNo.startsWith('B')) return { bg: '#0dcaf0', text: '#000' }; // สีฟ้า (ตัวหนังสือดำ)
-        if(tableNo.startsWith('C')) return { bg: '#198754', text: '#fff' }; // สีเขียว
-        if(tableNo.startsWith('D')) return { bg: '#fd7e14', text: '#fff' }; // สีส้ม
-        return { bg: '#ffeb3b', text: '#000' }; // สีเหลือง (Default)
+        if(tableNo.startsWith('A')) return { bg: '#dc3545', text: '#fff' }; // Zone A: แดง
+        if(tableNo.startsWith('B')) return { bg: '#0dcaf0', text: '#000' }; // Zone B: ฟ้า
+        if(tableNo.startsWith('C')) return { bg: '#198754', text: '#fff' }; // Zone C: เขียว
+        if(tableNo.startsWith('D')) return { bg: '#fd7e14', text: '#fff' }; // Zone D: ส้ม
+        return { bg: '#ffeb3b', text: '#000' }; // Default: เหลือง
     }
 
     async function getNextQueue(prefix) {
@@ -473,13 +478,12 @@
             
             document.getElementById('displayName').innerText = name;
             
-            // --- Logic เปลี่ยนสีป้ายหมายเลขโต๊ะตามโซน ---
+            // Logic เปลี่ยนสีป้ายตอนจองสำเร็จ
             const badge = document.getElementById('displayTable');
             badge.innerText = autoTableNo;
             const theme = getZoneTheme(autoTableNo);
             badge.style.background = theme.bg;
             badge.style.color = theme.text;
-            // ------------------------------------------
 
             btn.disabled = false; btn.innerText = "✅ จองสำเร็จ (กดจองต่อ)";
             setTimeout(() => { document.getElementById('ticketResult').scrollIntoView({behavior: "smooth"}); }, 300);
@@ -498,7 +502,7 @@
         document.getElementById('qrcodeDisplay').innerHTML = "";
     };
 
-    // --- ส่วนแสดงสถานะ ---
+    // --- ส่วนแสดงสถานะ (ปรับปรุงใหม่: แสดงเป็น Badge สี) ---
     window.loadTableStatus = async () => {
         const display = document.getElementById('statusList');
         display.innerHTML = "<div class='text-center text-white'>⏳ กำลังโหลด...</div>";
@@ -524,9 +528,8 @@
             let statusClass = 'status-booked';
             let statusText = `🟡 รอ (${currentPax}/${maxPax})`;
             
-            // ใช้ Theme สีเดียวกับป้าย
+            // ดึงค่าสีพื้นหลังและสีตัวอักษร
             const theme = getZoneTheme(d.table); 
-            let zoneColor = theme.bg;
 
             if (currentPax >= maxPax) {
                 statusClass = 'status-full';
@@ -536,10 +539,13 @@
                 statusText = `🟠 เข้า ${currentPax}/${maxPax}`;
             }
             
+            // ใช้ Badge แบบมีสีพื้นหลัง (table-badge-mini)
             display.innerHTML += `
                 <div class="col-4 col-sm-4 table-card-item" onclick="openTicketModal('${doc.id}', '${d.name}', '${d.table}')">
                     <div class="status-card p-2 text-center ${statusClass}">
-                        <h4 class="fw-bold mb-0 table-number-text" style="color:${zoneColor}">${d.table}</h4>
+                        <div class="table-badge-mini" style="background-color:${theme.bg}; color:${theme.text};">
+                            ${d.table}
+                        </div>
                         <small class="d-block text-truncate text-secondary" style="font-size:0.8rem;">${d.name}</small>
                         <span class="badge bg-dark mt-1" style="font-size:0.7rem;">${statusText}</span>
                     </div>
@@ -556,9 +562,10 @@
         const items = list.getElementsByClassName('table-card-item');
 
         for (let i = 0; i < items.length; i++) {
-            const h4 = items[i].getElementsByClassName("table-number-text")[0];
-            if (h4) {
-                const txtValue = h4.textContent || h4.innerText;
+            // ค้นหาใน element ที่เป็น badge แทน
+            const badge = items[i].getElementsByClassName("table-badge-mini")[0];
+            if (badge) {
+                const txtValue = badge.textContent || badge.innerText;
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
                     items[i].classList.remove('hidden');
                 } else {
@@ -571,13 +578,12 @@
     window.openTicketModal = (docId, name, table) => {
         document.getElementById('modalDisplayName').innerText = name;
         
-        // --- Logic เปลี่ยนสีป้ายหมายเลขโต๊ะใน Modal ---
+        // Logic เปลี่ยนสีป้ายใน Modal
         const badge = document.getElementById('modalDisplayTable');
         badge.innerText = table;
         const theme = getZoneTheme(table);
         badge.style.background = theme.bg;
         badge.style.color = theme.text;
-        // ------------------------------------------
 
         const qrContainer = document.getElementById("modalQrcodeDisplay");
         qrContainer.innerHTML = ""; 
@@ -623,7 +629,6 @@
                     resDiv.innerHTML = "<h3 class='text-danger'>❌ เต็มแล้ว</h3>";
                     setTimeout(() => html5QrcodeScanner.resume(), 2000);
                 } else {
-                    // ใช้สีเดียวกับโซนในหน้าสแกนด้วย
                     const theme = getZoneTheme(d.table);
                     document.getElementById('modalInfo').innerHTML = `
                         โต๊ะ: <span style="color:${theme.bg};font-size:1.5rem;font-weight:bold;">${d.table}</span><br>
