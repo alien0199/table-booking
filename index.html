@@ -18,7 +18,7 @@
         .container { max-width: 450px; margin-top: 15px; padding-bottom: 20px; }
         .hidden { display: none !important; }
         
-        /* --- เพิ่ม CSS สำหรับหน้าด่าน (Gate Screen) --- */
+        /* --- หน้าด่าน (Gate Screen) --- */
         #gateScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000000; z-index: 99999;
@@ -36,7 +36,6 @@
             font-size: 24px; text-align: center; letter-spacing: 5px;
             border-radius: 10px; padding: 10px; width: 100%; margin: 20px 0;
         }
-        /* ------------------------------------------- */
 
         /* การ์ดบัตรจอง */
         .ticket-card {
@@ -54,7 +53,6 @@
         .event-sub { font-size: 24px; color: #ffeb3b; font-weight: 700; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); margin-bottom: 20px; }
         .ticket-header { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.6); padding: 5px 25px; border-radius: 50px; font-size: 16px; margin-bottom: 25px; backdrop-filter: blur(5px); }
         
-        /* QR Code */
         .qr-bg { background: #fff; padding: 15px; border-radius: 15px; margin: 0 auto 20px auto; width: 210px; height: 210px; display: flex; align-items: center; justify-content: center; }
         #qrcodeDisplay img, #modalQrcodeDisplay img { display: block; margin: 0 auto; }
         
@@ -104,10 +102,23 @@
         .table-custom th { background-color: #212529; color: #ffeb3b; padding: 15px; font-weight: 600; }
         .table-custom td { vertical-align: middle; color: #000000; padding: 12px 15px; border-bottom: 1px solid #dee2e6; }
 
-        .btn-check:checked + .btn-vip { background-color: #ffc107; color: #000; border-color: #ffc107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.5); }
-        .btn-vip { border: 2px solid #ffc107; color: #ffc107; background: transparent; transition: all 0.2s; }
-        .btn-check:checked + .btn-vvip { background-color: #d63384; color: #fff; border-color: #d63384; box-shadow: 0 0 15px rgba(214, 51, 132, 0.5); }
-        .btn-vvip { border: 2px solid #d63384; color: #d63384; background: transparent; transition: all 0.2s; }
+        /* --- Zone Buttons Style (New) --- */
+        /* โซน A - สีแดง */
+        .btn-check:checked + .btn-zone-a { background-color: #dc3545; color: #fff; border-color: #dc3545; box-shadow: 0 0 15px rgba(220, 53, 69, 0.5); }
+        .btn-zone-a { border: 2px solid #dc3545; color: #dc3545; background: transparent; transition: all 0.2s; }
+
+        /* โซน B - สีฟ้า */
+        .btn-check:checked + .btn-zone-b { background-color: #0dcaf0; color: #000; border-color: #0dcaf0; box-shadow: 0 0 15px rgba(13, 202, 240, 0.5); }
+        .btn-zone-b { border: 2px solid #0dcaf0; color: #0dcaf0; background: transparent; transition: all 0.2s; }
+
+        /* โซน C - สีเขียว */
+        .btn-check:checked + .btn-zone-c { background-color: #198754; color: #fff; border-color: #198754; box-shadow: 0 0 15px rgba(25, 135, 84, 0.5); }
+        .btn-zone-c { border: 2px solid #198754; color: #198754; background: transparent; transition: all 0.2s; }
+
+        /* โซน D - สีส้ม */
+        .btn-check:checked + .btn-zone-d { background-color: #fd7e14; color: #fff; border-color: #fd7e14; box-shadow: 0 0 15px rgba(253, 126, 20, 0.5); }
+        .btn-zone-d { border: 2px solid #fd7e14; color: #fd7e14; background: transparent; transition: all 0.2s; }
+
     </style>
 </head>
 <body>
@@ -142,16 +153,26 @@
                 <div class="card p-4 border-0 shadow mb-4" style="background: #151515; border-radius: 20px;">
                     
                     <div class="mb-4">
-                        <label class="text-white-50 small mb-2">เลือกชุดโต๊ะ</label>
-                        <div class="d-flex gap-2">
-                            <input type="radio" class="btn-check" name="zoneOption" id="optVIP" value="VIP" checked>
-                            <label class="btn btn-vip w-50 py-3 fw-bold rounded-3" for="optVIP">🎫 VIP (ชุด 1)</label>
-
-                            <input type="radio" class="btn-check" name="zoneOption" id="optVVIP" value="VVIP">
-                            <label class="btn btn-vvip w-50 py-3 fw-bold rounded-3" for="optVVIP">👑 VVIP (ชุด 2)</label>
+                        <label class="text-white-50 small mb-2">เลือกโซนที่นั่ง</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="zoneOption" id="optZoneA" value="A" checked>
+                                <label class="btn btn-zone-a w-100 py-3 fw-bold rounded-3" for="optZoneA">🔴 Zone A</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="zoneOption" id="optZoneB" value="B">
+                                <label class="btn btn-zone-b w-100 py-3 fw-bold rounded-3" for="optZoneB">🔵 Zone B</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="zoneOption" id="optZoneC" value="C">
+                                <label class="btn btn-zone-c w-100 py-3 fw-bold rounded-3" for="optZoneC">🟢 Zone C</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="zoneOption" id="optZoneD" value="D">
+                                <label class="btn btn-zone-d w-100 py-3 fw-bold rounded-3" for="optZoneD">🟠 Zone D</label>
+                            </div>
                         </div>
                     </div>
-
                     <div class="mb-3">
                         <input type="text" id="custName" class="form-control" placeholder="ชื่อลูกค้า">
                     </div>
@@ -178,7 +199,7 @@
                     <div class="ticket-card" id="finalTicket">
                         <div class="event-title">สรรพยา บ้านเรา</div>
                         <div class="event-sub">โพ-ออก เฟสติวัล</div>
-                        <div class="ticket-header">บัตรจองโต๊ะ VIP</div>
+                        <div class="ticket-header">บัตรจองโต๊ะ</div>
                         <div class="qr-bg"><div id="qrcodeDisplay"></div></div>
                         <div class="cust-name" id="displayName">ชื่อลูกค้า</div>
                         <div class="table-badge" id="displayTable">...</div>
@@ -257,7 +278,7 @@
         <div class="ticket-card" id="modalTicketCard">
             <div class="event-title">สรรพยา บ้านเรา</div>
             <div class="event-sub">โพ-ออก เฟสติวัล</div>
-            <div class="ticket-header">บัตรจองโต๊ะ VIP</div>
+            <div class="ticket-header">บัตรจองโต๊ะ</div>
             <div class="qr-bg"><div id="modalQrcodeDisplay"></div></div>
             <div class="cust-name" id="modalDisplayName">ชื่อลูกค้า</div>
             <div class="table-badge" id="modalDisplayTable">...</div>
