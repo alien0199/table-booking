@@ -174,6 +174,8 @@
         .zone-b-theme { border-bottom: 3px solid #0dcaf0; }
         .zone-c-theme { border-bottom: 3px solid #198754; }
         .zone-d-theme { border-bottom: 3px solid #fd7e14; }
+        /* เพิ่มธีม VIP */
+        .zone-vip-theme { border-bottom: 3px solid #ffeb3b; }
 
         .selected-display {
             background: #222; border: 1px solid #333; border-radius: 12px;
@@ -212,19 +214,11 @@
             <div class="user-container">
                 <div class="card p-4 border-0 shadow mb-4" style="background: #151515; border-radius: 20px;">
                     
-                    <label class="text-white-50 small mb-2">1. เลือกโซน (Zone)</label>
-                    <div class="btn-group w-100 mb-3" role="group">
-                        <input type="radio" class="btn-check" name="zoneSelect" id="z-a" value="A" autocomplete="off" checked onclick="renderZone('A')">
-                        <label class="btn btn-outline-danger" for="z-a">A</label>
-
-                        <input type="radio" class="btn-check" name="zoneSelect" id="z-b" value="B" autocomplete="off" onclick="renderZone('B')">
-                        <label class="btn btn-outline-info" for="z-b">B</label>
-
-                        <input type="radio" class="btn-check" name="zoneSelect" id="z-c" value="C" autocomplete="off" onclick="renderZone('C')">
-                        <label class="btn btn-outline-success" for="z-c">C</label>
-
-                        <input type="radio" class="btn-check" name="zoneSelect" id="z-d" value="D" autocomplete="off" onclick="renderZone('D')">
-                        <label class="btn btn-outline-warning" for="z-d">D</label>
+                    <div class="mb-3 text-center p-2" style="border: 2px solid #ffeb3b; border-radius: 15px; background: rgba(255, 235, 59, 0.1);">
+                        <h3 class="fw-bold m-0" style="color: #ffeb3b; text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);">
+                            👑 VIP ZONE
+                        </h3>
+                        <span class="text-white-50 small">จำนวน 50 ที่นั่ง</span>
                     </div>
 
                     <div class="mb-3">
@@ -466,16 +460,12 @@
     let currentScanDoc = null;
     let currentScanData = null;
 
-    // --- ส่วนจัดการ Cinema Seat (เพิ่มใหม่) ---
-    const MAX_TABLES = 50; // จำนวนโต๊ะสูงสุดต่อโซน
+    // --- ส่วนจัดการ Cinema Seat (แก้ไขเป็น VIP) ---
+    const MAX_TABLES = 50; // จำนวนโต๊ะสูงสุด
     let selectedTableID = null;
 
     window.getZoneTheme = (tableNo) => {
-        if(!tableNo) return { bg: '#ccc', text: '#000' };
-        if(tableNo.startsWith('A')) return { bg: '#dc3545', text: '#fff' };
-        if(tableNo.startsWith('B')) return { bg: '#0dcaf0', text: '#000' };
-        if(tableNo.startsWith('C')) return { bg: '#198754', text: '#fff' };
-        if(tableNo.startsWith('D')) return { bg: '#fd7e14', text: '#fff' };
+        // บังคับให้เป็นสีทอง (VIP) ทั้งหมด
         return { bg: '#ffeb3b', text: '#000' };
     };
 
@@ -587,7 +577,7 @@
             
             if(!snapCheck.empty) {
                 alert(`❌ เสียใจด้วยครับ โต๊ะ ${selectedTableID} เพิ่งถูกจองตัดหน้าไป!`);
-                renderZone(selectedTableID.charAt(0)); 
+                renderZone(selectedTableID.charAt(0) === 'V' ? 'VIP' : selectedTableID.charAt(0)); 
                 btn.disabled = false; btn.innerText = "✅ ยืนยันการจอง";
                 return;
             }
@@ -614,8 +604,8 @@
 
             btn.disabled = false; btn.innerText = "✅ จองสำเร็จ (กดจองต่อ)";
             
-            // รีโหลดผังให้เป็นสีแดง
-            renderZone(selectedTableID.charAt(0));
+            // รีโหลดผังให้เป็นสีแดง (บังคับ VIP)
+            renderZone('VIP');
 
             setTimeout(() => { document.getElementById('ticketResult').scrollIntoView({behavior: "smooth"}); }, 300);
         } catch (e) { 
@@ -635,8 +625,8 @@
         selectedTableID = null;
         updateSelectDisplay();
         
-        const currentZone = document.querySelector('input[name="zoneSelect"]:checked').value;
-        renderZone(currentZone);
+        // บังคับโหลดโซน VIP
+        renderZone('VIP');
     };
 
     window.loadTableStatus = async () => {
@@ -989,8 +979,8 @@
     window.saveEdit = window.saveEdit; 
     window.exportToCSV = window.exportToCSV;
 
-    // เริ่มต้นโหลดผังโซน A (รอ 1 วินาทีเพื่อให้ Firebase พร้อม)
-    setTimeout(() => renderZone('A'), 1000);
+    // เริ่มต้นโหลดผังโซน VIP (50 โต๊ะ)
+    setTimeout(() => renderZone('VIP'), 1000);
 
 </script>
 
