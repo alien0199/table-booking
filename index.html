@@ -118,7 +118,7 @@
         .table-custom th { background-color: #212529; color: #ffeb3b; padding: 15px; font-weight: 600; }
         .table-custom td { vertical-align: middle; color: #000000; padding: 12px 15px; border-bottom: 1px solid #dee2e6; }
 
-        /* --- Cinema Mode Styles (เพิ่มใหม่) --- */
+        /* --- Cinema Mode Styles (VIP Only) --- */
         .seat-screen {
             width: 100%; height: 15px; background: #444; margin-bottom: 20px;
             border-radius: 50%; box-shadow: 0 5px 15px rgba(255,255,255,0.1);
@@ -169,12 +169,7 @@
             font-weight: 800;
         }
 
-        /* สีประจำโซน (สำหรับเส้นขอบ) */
-        .zone-a-theme { border-bottom: 3px solid #dc3545; }
-        .zone-b-theme { border-bottom: 3px solid #0dcaf0; }
-        .zone-c-theme { border-bottom: 3px solid #198754; }
-        .zone-d-theme { border-bottom: 3px solid #fd7e14; }
-        /* เพิ่มธีม VIP */
+        /* ธีม VIP */
         .zone-vip-theme { border-bottom: 3px solid #ffeb3b; }
 
         .selected-display {
@@ -218,7 +213,7 @@
                         <h3 class="fw-bold m-0" style="color: #ffeb3b; text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);">
                             👑 VIP ZONE
                         </h3>
-                        <span class="text-white-50 small">จำนวน 50 ที่นั่ง</span>
+                        <span class="text-white-50 small">โซนพิเศษ 50 ที่นั่ง</span>
                     </div>
 
                     <div class="mb-3">
@@ -460,7 +455,7 @@
     let currentScanDoc = null;
     let currentScanData = null;
 
-    // --- ส่วนจัดการ Cinema Seat (แก้ไขเป็น VIP) ---
+    // --- ส่วนจัดการ Cinema Seat (แก้ไขเป็น VIP ล้วน) ---
     const MAX_TABLES = 50; // จำนวนโต๊ะสูงสุด
     let selectedTableID = null;
 
@@ -577,7 +572,8 @@
             
             if(!snapCheck.empty) {
                 alert(`❌ เสียใจด้วยครับ โต๊ะ ${selectedTableID} เพิ่งถูกจองตัดหน้าไป!`);
-                renderZone(selectedTableID.charAt(0) === 'V' ? 'VIP' : selectedTableID.charAt(0)); 
+                // ถ้าจองไม่ทัน รีเฟรช VIP ใหม่
+                renderZone('VIP'); 
                 btn.disabled = false; btn.innerText = "✅ ยืนยันการจอง";
                 return;
             }
