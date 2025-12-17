@@ -58,7 +58,7 @@
         
         .cust-name { font-size: 26px; font-weight: 700; margin-bottom: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
         
-        /* ป้ายเลขโต๊ะ (ใช้ร่วมกันทั้งหน้าจองและ Modal) */
+        /* ป้ายเลขโต๊ะ */
         .table-badge { 
             font-size: 48px; font-weight: 700; 
             background: #ffeb3b; color: #000; 
@@ -68,7 +68,6 @@
             transition: all 0.3s ease;
         }
         
-        /* เพิ่ม: ป้ายเลขโต๊ะขนาดเล็กสำหรับหน้าสถานะ */
         .table-badge-mini {
             font-size: 1.5rem; font-weight: 800;
             padding: 5px 15px; border-radius: 8px;
@@ -96,15 +95,13 @@
             color: #0056b3 !important; 
             box-shadow: 0 0 10px rgba(0, 86, 179, 0.3); 
         }
-        .form-control::placeholder { color: #aaa; font-weight: 400; }
-        
         .btn-main { background: linear-gradient(90deg, #00c6ff, #0072ff); border: none; height: 55px; font-size: 1.2rem; font-weight: 700; color: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4); }
+        .btn-main:disabled { background: #555; color: #aaa; box-shadow: none; cursor: not-allowed; }
+
         .nav-pills .nav-link { background: #222; color: #aaa; border-radius: 10px; margin: 0 2px; }
         .nav-pills .nav-link.active { background: #6200ea; color: #fff; font-weight: bold; }
         
         .status-card { background: #222; border-radius: 12px; border: 1px solid #333; transition: all 0.2s; cursor: pointer; }
-        .status-card:active { transform: scale(0.95); border-color: #fff; }
-        
         .status-booked { border-bottom: 4px solid #ffc107; }
         .status-partial { border-bottom: 4px solid #fd7e14; }
         .status-full { border-bottom: 4px solid #2ecc71; opacity: 0.7; }
@@ -121,19 +118,67 @@
         .table-custom th { background-color: #212529; color: #ffeb3b; padding: 15px; font-weight: 600; }
         .table-custom td { vertical-align: middle; color: #000000; padding: 12px 15px; border-bottom: 1px solid #dee2e6; }
 
-        /* --- Zone Buttons Style --- */
-        .btn-check:checked + .btn-zone-a { background-color: #dc3545; color: #fff; border-color: #dc3545; box-shadow: 0 0 15px rgba(220, 53, 69, 0.5); }
-        .btn-zone-a { border: 2px solid #dc3545; color: #dc3545; background: transparent; transition: all 0.2s; }
+        /* --- Cinema Mode Styles (เพิ่มใหม่) --- */
+        .seat-screen {
+            width: 100%; height: 15px; background: #444; margin-bottom: 20px;
+            border-radius: 50%; box-shadow: 0 5px 15px rgba(255,255,255,0.1);
+            text-align: center; color: #888; font-size: 10px; line-height: 15px;
+        }
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* แถวละ 5 โต๊ะ */
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 5px;
+            background: #111;
+            border-radius: 10px;
+        }
+        .seat-item {
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 12px 0;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #ccc;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .seat-item:hover { transform: scale(1.05); border-color: #fff; }
 
-        .btn-check:checked + .btn-zone-b { background-color: #0dcaf0; color: #000; border-color: #0dcaf0; box-shadow: 0 0 15px rgba(13, 202, 240, 0.5); }
-        .btn-zone-b { border: 2px solid #0dcaf0; color: #0dcaf0; background: transparent; transition: all 0.2s; }
+        /* สถานะที่นั่ง */
+        .seat-taken {
+            background-color: #111;
+            color: #333;
+            border: 1px dashed #333;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .seat-taken::after { content: '❌'; position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size: 0.8rem; opacity: 0.5; }
 
-        .btn-check:checked + .btn-zone-c { background-color: #198754; color: #fff; border-color: #198754; box-shadow: 0 0 15px rgba(25, 135, 84, 0.5); }
-        .btn-zone-c { border: 2px solid #198754; color: #198754; background: transparent; transition: all 0.2s; }
+        /* สีตอนเลือกแล้ว */
+        .seat-selected { 
+            background-color: #ffeb3b !important; 
+            color: #000 !important; 
+            box-shadow: 0 0 15px rgba(255, 235, 59, 0.5);
+            border-color: #ffeb3b;
+            transform: scale(1.1);
+            font-weight: 800;
+        }
 
-        .btn-check:checked + .btn-zone-d { background-color: #fd7e14; color: #fff; border-color: #fd7e14; box-shadow: 0 0 15px rgba(253, 126, 20, 0.5); }
-        .btn-zone-d { border: 2px solid #fd7e14; color: #fd7e14; background: transparent; transition: all 0.2s; }
+        /* สีประจำโซน (สำหรับเส้นขอบ) */
+        .zone-a-theme { border-bottom: 3px solid #dc3545; }
+        .zone-b-theme { border-bottom: 3px solid #0dcaf0; }
+        .zone-c-theme { border-bottom: 3px solid #198754; }
+        .zone-d-theme { border-bottom: 3px solid #fd7e14; }
 
+        .selected-display {
+            background: #222; border: 1px solid #333; border-radius: 12px;
+            padding: 15px; margin-bottom: 20px; text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -167,27 +212,38 @@
             <div class="user-container">
                 <div class="card p-4 border-0 shadow mb-4" style="background: #151515; border-radius: 20px;">
                     
-                    <div class="mb-4">
-                        <label class="text-white-50 small mb-2">เลือกโซนที่นั่ง</label>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <input type="radio" class="btn-check" name="zoneOption" id="optZoneA" value="A" checked>
-                                <label class="btn btn-zone-a w-100 py-3 fw-bold rounded-3" for="optZoneA">🔴 Zone A</label>
-                            </div>
-                            <div class="col-6">
-                                <input type="radio" class="btn-check" name="zoneOption" id="optZoneB" value="B">
-                                <label class="btn btn-zone-b w-100 py-3 fw-bold rounded-3" for="optZoneB">🔵 Zone B</label>
-                            </div>
-                            <div class="col-6">
-                                <input type="radio" class="btn-check" name="zoneOption" id="optZoneC" value="C">
-                                <label class="btn btn-zone-c w-100 py-3 fw-bold rounded-3" for="optZoneC">🟢 Zone C</label>
-                            </div>
-                            <div class="col-6">
-                                <input type="radio" class="btn-check" name="zoneOption" id="optZoneD" value="D">
-                                <label class="btn btn-zone-d w-100 py-3 fw-bold rounded-3" for="optZoneD">🟠 Zone D</label>
-                            </div>
-                        </div>
+                    <label class="text-white-50 small mb-2">1. เลือกโซน (Zone)</label>
+                    <div class="btn-group w-100 mb-3" role="group">
+                        <input type="radio" class="btn-check" name="zoneSelect" id="z-a" value="A" autocomplete="off" checked onclick="renderZone('A')">
+                        <label class="btn btn-outline-danger" for="z-a">A</label>
+
+                        <input type="radio" class="btn-check" name="zoneSelect" id="z-b" value="B" autocomplete="off" onclick="renderZone('B')">
+                        <label class="btn btn-outline-info" for="z-b">B</label>
+
+                        <input type="radio" class="btn-check" name="zoneSelect" id="z-c" value="C" autocomplete="off" onclick="renderZone('C')">
+                        <label class="btn btn-outline-success" for="z-c">C</label>
+
+                        <input type="radio" class="btn-check" name="zoneSelect" id="z-d" value="D" autocomplete="off" onclick="renderZone('D')">
+                        <label class="btn btn-outline-warning" for="z-d">D</label>
                     </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between text-white-50 small mb-1">
+                            <span>ผังที่นั่ง (แตะเพื่อเลือก)</span>
+                            <span id="seatLoading" class="hidden text-warning">⏳ โหลดข้อมูล...</span>
+                        </div>
+                        <div class="seat-screen">STAGE / SCREEN</div>
+                        <div id="seatMapContainer" class="seat-grid">
+                            </div>
+                    </div>
+
+                    <div class="selected-display">
+                        <span class="text-secondary small">โต๊ะที่เลือก:</span>
+                        <h2 id="selectedTableText" class="fw-bold m-0" style="color:#777">ยังไม่ระบุ</h2>
+                        <input type="hidden" id="finalTableNo">
+                    </div>
+
+                    <hr class="border-secondary">
 
                     <div class="mb-3">
                         <input type="text" id="custName" class="form-control" placeholder="ชื่อลูกค้า">
@@ -196,18 +252,16 @@
                         <input type="tel" id="custPhone" class="form-control" placeholder="เบอร์โทร">
                     </div>
                     <div class="mb-3">
-                        <input type="text" id="paymentRef" class="form-control" placeholder="หมายเหตุอื่นๆ (ถ้ามี)">
+                        <input type="text" id="paymentRef" class="form-control" placeholder="หมายเหตุ (ถ้ามี)">
                     </div>
-
                     <div class="mb-3">
-                        <label class="text-white-50 small mb-1">ช่องทางการชำระเงิน</label>
                         <select id="paymentMethod" class="form-select">
                             <option value="เงินสด">💵 เงินสด</option>
                             <option value="โอนเข้าบัญชี">🏦 โอนเข้าบัญชี</option>
                         </select>
                     </div>
                     
-                    <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100 mt-3">✅ รันคิวและยืนยัน</button>
+                    <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100 mt-2" disabled>✅ ยืนยันการจอง</button>
                 </div>
                 
                 <div id="ticketResult" class="hidden animate__animated animate__fadeInUp">
@@ -381,7 +435,6 @@
         document.getElementById('gateScreen').classList.add('hidden');
     }
 
-    // ตรวจสอบทันทีที่เปิดเว็บ
     window.addEventListener('load', () => {
         if(localStorage.getItem(STORAGE_KEY) === "granted") {
             unlockSystem();
@@ -413,6 +466,101 @@
     let currentScanDoc = null;
     let currentScanData = null;
 
+    // --- ส่วนจัดการ Cinema Seat (เพิ่มใหม่) ---
+    const MAX_TABLES = 50; // จำนวนโต๊ะสูงสุดต่อโซน
+    let selectedTableID = null;
+
+    window.getZoneTheme = (tableNo) => {
+        if(!tableNo) return { bg: '#ccc', text: '#000' };
+        if(tableNo.startsWith('A')) return { bg: '#dc3545', text: '#fff' };
+        if(tableNo.startsWith('B')) return { bg: '#0dcaf0', text: '#000' };
+        if(tableNo.startsWith('C')) return { bg: '#198754', text: '#fff' };
+        if(tableNo.startsWith('D')) return { bg: '#fd7e14', text: '#fff' };
+        return { bg: '#ffeb3b', text: '#000' };
+    };
+
+    window.renderZone = async (zonePrefix) => {
+        const container = document.getElementById('seatMapContainer');
+        const loading = document.getElementById('seatLoading');
+        
+        // Reset การเลือก
+        selectedTableID = null;
+        updateSelectDisplay();
+        
+        loading.classList.remove('hidden');
+        container.innerHTML = ""; 
+
+        try {
+            // 1. ดึงข้อมูลว่าโต๊ะไหนจองแล้วบ้าง
+            const q = query(collection(db, "bookings")); 
+            const snapshot = await getDocs(q);
+            let takenSeats = [];
+            
+            snapshot.forEach(doc => {
+                const t = doc.data().table; 
+                if (t && t.startsWith(zonePrefix)) {
+                    takenSeats.push(t);
+                }
+            });
+
+            // 2. วนลูปสร้างปุ่มโต๊ะ
+            let html = "";
+            for(let i = 1; i <= MAX_TABLES; i++) {
+                let tableID = zonePrefix + String(i).padStart(3, '0');
+                
+                let isTaken = takenSeats.includes(tableID);
+                let cssClass = isTaken ? 'seat-taken' : 'seat-item';
+                let zoneClass = `zone-${zonePrefix.toLowerCase()}-theme`;
+                
+                html += `
+                    <div id="seat-${tableID}" 
+                         class="${cssClass} ${zoneClass}" 
+                         onclick="selectSeat('${tableID}')">
+                         ${i}
+                    </div>`;
+            }
+            container.innerHTML = html;
+
+        } catch (e) {
+            console.error(e);
+            container.innerHTML = "<p class='text-danger text-center w-100'>โหลดข้อมูลไม่สำเร็จ</p>";
+        } finally {
+            loading.classList.add('hidden');
+        }
+    };
+
+    window.selectSeat = (tableID) => {
+        // เอาสีออกจากปุ่มเดิม
+        if(selectedTableID) {
+            const oldSeat = document.getElementById(`seat-${selectedTableID}`);
+            if(oldSeat) oldSeat.classList.remove('seat-selected');
+        }
+
+        // ใส่สีปุ่มใหม่
+        selectedTableID = tableID;
+        const newSeat = document.getElementById(`seat-${tableID}`);
+        if(newSeat) newSeat.classList.add('seat-selected');
+
+        updateSelectDisplay();
+    };
+
+    function updateSelectDisplay() {
+        const txt = document.getElementById('selectedTableText');
+        const btn = document.getElementById('btnSave');
+        
+        if(selectedTableID) {
+            txt.innerText = selectedTableID;
+            txt.style.color = window.getZoneTheme(selectedTableID).bg;
+            btn.disabled = false;
+        } else {
+            txt.innerText = "ยังไม่ระบุ";
+            txt.style.color = "#777";
+            btn.disabled = true;
+        }
+    }
+
+    // --- จบส่วน Cinema Seat ---
+
     function formatThaiDate(timestamp) {
         if(!timestamp) return "-";
         return timestamp.toDate().toLocaleString('th-TH', { 
@@ -420,52 +568,32 @@
         });
     }
 
-    // ฟังก์ชัน Theme สี (แดง, ฟ้า, เขียว, ส้ม)
-    function getZoneTheme(tableNo) {
-        if(tableNo.startsWith('A')) return { bg: '#dc3545', text: '#fff' }; // Zone A: แดง
-        if(tableNo.startsWith('B')) return { bg: '#0dcaf0', text: '#000' }; // Zone B: ฟ้า
-        if(tableNo.startsWith('C')) return { bg: '#198754', text: '#fff' }; // Zone C: เขียว
-        if(tableNo.startsWith('D')) return { bg: '#fd7e14', text: '#fff' }; // Zone D: ส้ม
-        return { bg: '#ffeb3b', text: '#000' }; // Default: เหลือง
-    }
-
-    async function getNextQueue(prefix) {
-        const q = query(collection(db, "bookings"));
-        const snapshot = await getDocs(q);
-        let existingNumbers = [];
-        snapshot.forEach(doc => {
-            const t = doc.data().table; 
-            if (t.startsWith(prefix)) {
-                const numPart = parseInt(t.replace(prefix, ''));
-                if (!isNaN(numPart)) existingNumbers.push(numPart);
-            }
-        });
-        existingNumbers.sort((a, b) => a - b);
-        let nextNum = 1;
-        for (let num of existingNumbers) {
-            if (num === nextNum) nextNum++; else if (num > nextNum) break; 
-        }
-        return prefix + String(nextNum).padStart(3, '0');
-    }
-
     window.addBooking = async () => {
         const btn = document.getElementById('btnSave');
-        const zonePrefix = document.querySelector('input[name="zoneOption"]:checked').value;
         const name = document.getElementById('custName').value;
         const phone = document.getElementById('custPhone').value;
         const payMethod = document.getElementById('paymentMethod').value; 
         const payRef = document.getElementById('paymentRef').value; 
 
+        if(!selectedTableID) return alert("❌ กรุณาเลือกโต๊ะก่อนครับ");
         if(!name) return alert("❌ กรุณาใส่ชื่อลูกค้า");
 
-        btn.disabled = true; btn.innerText = "⏳ กำลังประมวลผล...";
+        btn.disabled = true; btn.innerText = "⏳ กำลังบันทึก...";
 
         try {
-            const autoTableNo = await getNextQueue(zonePrefix);
-            btn.innerText = "⏳ กำลังบันทึกข้อมูล...";
+            // เช็คซ้ำว่าโดนแย่งไปหรือยัง
+            const qCheck = query(collection(db, "bookings"), where("table", "==", selectedTableID));
+            const snapCheck = await getDocs(qCheck);
             
+            if(!snapCheck.empty) {
+                alert(`❌ เสียใจด้วยครับ โต๊ะ ${selectedTableID} เพิ่งถูกจองตัดหน้าไป!`);
+                renderZone(selectedTableID.charAt(0)); 
+                btn.disabled = false; btn.innerText = "✅ ยืนยันการจอง";
+                return;
+            }
+
             const docRef = await addDoc(collection(db, "bookings"), {
-                name, phone, table: autoTableNo, 
+                name, phone, table: selectedTableID, 
                 paymentMethod: payMethod, paymentRef: payRef, 
                 status: "booked", pax: 0, maxPax: 4, 
                 createdAt: serverTimestamp()
@@ -478,14 +606,17 @@
             
             document.getElementById('displayName').innerText = name;
             
-            // Logic เปลี่ยนสีป้ายตอนจองสำเร็จ
             const badge = document.getElementById('displayTable');
-            badge.innerText = autoTableNo;
-            const theme = getZoneTheme(autoTableNo);
+            badge.innerText = selectedTableID;
+            const theme = window.getZoneTheme(selectedTableID);
             badge.style.background = theme.bg;
             badge.style.color = theme.text;
 
             btn.disabled = false; btn.innerText = "✅ จองสำเร็จ (กดจองต่อ)";
+            
+            // รีโหลดผังให้เป็นสีแดง
+            renderZone(selectedTableID.charAt(0));
+
             setTimeout(() => { document.getElementById('ticketResult').scrollIntoView({behavior: "smooth"}); }, 300);
         } catch (e) { 
             console.error(e); 
@@ -500,9 +631,14 @@
         document.getElementById('paymentRef').value = '';
         document.getElementById('ticketResult').classList.add('hidden');
         document.getElementById('qrcodeDisplay').innerHTML = "";
+        
+        selectedTableID = null;
+        updateSelectDisplay();
+        
+        const currentZone = document.querySelector('input[name="zoneSelect"]:checked').value;
+        renderZone(currentZone);
     };
 
-    // --- ส่วนแสดงสถานะ (ปรับปรุงใหม่: แสดงเป็น Badge สี) ---
     window.loadTableStatus = async () => {
         const display = document.getElementById('statusList');
         display.innerHTML = "<div class='text-center text-white'>⏳ กำลังโหลด...</div>";
@@ -527,9 +663,7 @@
             const maxPax = d.maxPax || 4;
             let statusClass = 'status-booked';
             let statusText = `🟡 รอ (${currentPax}/${maxPax})`;
-            
-            // ดึงค่าสีพื้นหลังและสีตัวอักษร
-            const theme = getZoneTheme(d.table); 
+            const theme = window.getZoneTheme(d.table); 
 
             if (currentPax >= maxPax) {
                 statusClass = 'status-full';
@@ -539,7 +673,6 @@
                 statusText = `🟠 เข้า ${currentPax}/${maxPax}`;
             }
             
-            // ใช้ Badge แบบมีสีพื้นหลัง (table-badge-mini)
             display.innerHTML += `
                 <div class="col-4 col-sm-4 table-card-item" onclick="openTicketModal('${doc.id}', '${d.name}', '${d.table}')">
                     <div class="status-card p-2 text-center ${statusClass}">
@@ -562,7 +695,6 @@
         const items = list.getElementsByClassName('table-card-item');
 
         for (let i = 0; i < items.length; i++) {
-            // ค้นหาใน element ที่เป็น badge แทน
             const badge = items[i].getElementsByClassName("table-badge-mini")[0];
             if (badge) {
                 const txtValue = badge.textContent || badge.innerText;
@@ -577,11 +709,9 @@
 
     window.openTicketModal = (docId, name, table) => {
         document.getElementById('modalDisplayName').innerText = name;
-        
-        // Logic เปลี่ยนสีป้ายใน Modal
         const badge = document.getElementById('modalDisplayTable');
         badge.innerText = table;
-        const theme = getZoneTheme(table);
+        const theme = window.getZoneTheme(table);
         badge.style.background = theme.bg;
         badge.style.color = theme.text;
 
@@ -629,7 +759,7 @@
                     resDiv.innerHTML = "<h3 class='text-danger'>❌ เต็มแล้ว</h3>";
                     setTimeout(() => html5QrcodeScanner.resume(), 2000);
                 } else {
-                    const theme = getZoneTheme(d.table);
+                    const theme = window.getZoneTheme(d.table);
                     document.getElementById('modalInfo').innerHTML = `
                         โต๊ะ: <span style="color:${theme.bg};font-size:1.5rem;font-weight:bold;">${d.table}</span><br>
                         ชื่อ: ${d.name}<br>
@@ -713,8 +843,7 @@
                 const d = doc.data();
                 const bookedTime = formatThaiDate(d.createdAt);
                 
-                // ใช้สีตามโซนในตาราง Admin
-                const theme = getZoneTheme(d.table);
+                const theme = window.getZoneTheme(d.table);
                 const zoneColor = theme.bg;
 
                 const payBadge = d.paymentMethod === 'เงินสด' ? '<span class="badge bg-success">💵 เงินสด</span>' : '<span class="badge bg-primary">🏦 โอน</span>';
@@ -795,7 +924,6 @@
         }
     };
 
-    // --- ฟังก์ชัน Export CSV ---
     window.exportToCSV = async () => {
         const confirmExport = confirm("ต้องการดาวน์โหลดข้อมูลทั้งหมดไปทำบัญชีใช่หรือไม่?");
         if (!confirmExport) return;
@@ -806,7 +934,6 @@
 
             if (snapshot.empty) { alert("ไม่มีข้อมูลให้ Export"); return; }
 
-            // เพิ่ม BOM \uFEFF เพื่อให้ Excel อ่านภาษาไทยออก
             let csvContent = "\uFEFF"; 
             csvContent += "Table No.,Customer Name,Phone,Payment Method,Ref/Note,Pax In,Pax Max,Status,Booking Time\n";
 
@@ -856,12 +983,15 @@
         }
     };
     
-    // Export ฟังก์ชันทั้งหมดสู่ภายนอก
     window.del = window.del; 
     window.showQr = window.showQr; 
     window.openEdit = window.openEdit; 
     window.saveEdit = window.saveEdit; 
     window.exportToCSV = window.exportToCSV;
+
+    // เริ่มต้นโหลดผังโซน A (รอ 1 วินาทีเพื่อให้ Firebase พร้อม)
+    setTimeout(() => renderZone('A'), 1000);
+
 </script>
 
 </body>
