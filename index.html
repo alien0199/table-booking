@@ -12,7 +12,7 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700;900&display=swap');
 
         body { font-family: 'Kanit', sans-serif; background-color: #050505; color: #fff; padding-bottom: 20px; position: relative; min-height: 100vh; }
         .container { max-width: 450px; margin-top: 15px; padding-bottom: 20px; }
@@ -37,117 +37,130 @@
             border-radius: 10px; padding: 10px; width: 100%; margin: 20px 0;
         }
 
-        /* ===== VIP CONCERT TICKET STYLE (NEW) ===== */
-        .ticket-card {
-            background: radial-gradient(
-                circle at top,
-                #7a3cff 0%,
-                #3a145f 35%,
-                #0b0614 100%
-            );
-            border-radius: 28px;
-            padding: 42px 24px;
-            text-align: center;
-            position: relative;
+        /* ===== NEW VIP TICKET DESIGN (ตามที่คุณให้มา) ===== */
+        .vip-ticket {
+            display: flex;
+            justify-content: center;
+            margin: 10px auto;
+            width: 100%;
+        }
+
+        .vip-border {
+            width: 100%;
             max-width: 360px;
-            margin: 0 auto;
-            border: 2px solid rgba(255, 215, 0, 0.8); /* ขอบทอง */
-            box-shadow:
-                0 0 25px rgba(255, 215, 0, 0.35), /* แสงฟุ้งสีทอง */
-                0 20px 60px rgba(0, 0, 0, 0.8);
-            overflow: hidden; /* ป้องกันแสงเกินขอบ */
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 26px 20px 32px;
+            border-radius: 32px;
+            background: radial-gradient(circle at top, #7b3cff 0%, #3a145f 40%, #08030f 100%);
+            border: 2px solid rgba(255,215,0,0.9);
+            box-shadow: 0 0 35px rgba(255,215,0,0.4), 0 0 80px rgba(255,140,0,0.2);
+            position: relative;
+            text-align: center;
+            color: #fff;
+            font-family: 'Kanit', sans-serif;
+            overflow: hidden;
         }
 
-        /* เอฟเฟกต์ไฟเวที */
-        .ticket-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at 20% 10%, rgba(255,255,255,0.15), transparent 40%),
-                radial-gradient(circle at 80% 20%, rgba(138,43,226,0.35), transparent 45%);
-            border-radius: 28px;
-            pointer-events: none;
-        }
-
-        .event-title {
-            font-size: 30px;
+        /* Header */
+        .vip-header .title-main {
+            font-size: 28px;
             font-weight: 800;
-            color: #ffffff;
-            text-shadow: 0 0 12px rgba(255,255,255,0.4);
-            position: relative; z-index: 2;
-            margin-bottom: 5px; line-height: 1.1;
+            text-shadow: 0 0 12px rgba(255,255,255,0.5);
+            line-height: 1.1;
         }
-        .event-sub {
+
+        .vip-header .title-sub {
             font-size: 22px;
             font-weight: 800;
             color: #ffeb3b;
-            margin-bottom: 20px;
-            text-shadow: 0 0 12px rgba(255,235,59,0.7);
-            position: relative; z-index: 2;
+            text-shadow: 0 0 12px rgba(255,235,59,0.8);
+            margin-bottom: 6px;
         }
 
-        /* VIP Badge Header */
-        .ticket-header {
+        .live-badge {
             display: inline-block;
-            padding: 6px 26px;
-            border-radius: 50px;
-            background: rgba(0,0,0,0.35);
+            margin-top: 6px;
+            padding: 4px 16px;
+            border-radius: 999px;
+            background: rgba(0,0,0,0.45);
             border: 1px solid #ffd700;
             color: #ffd700;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 24px;
-            box-shadow: 0 0 12px rgba(255,215,0,0.5);
-            position: relative; z-index: 2;
-            backdrop-filter: blur(5px);
-            font-size: 16px;
+            font-size: 13px;
+            box-shadow: 0 0 10px rgba(255,215,0,0.5);
         }
 
-        /* QR Code Area */
-        .qr-bg {
-            background: #ffffff;
-            padding: 14px;
+        /* VIP PASS Label */
+        .vip-pass {
+            margin: 20px auto 15px;
+            padding: 8px 28px;
             border-radius: 18px;
-            width: 210px;
-            height: 210px;
-            margin: 0 auto 20px auto;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow:
-                0 0 0 4px #ffd700,
-                0 0 30px rgba(255,215,0,0.6);
-            position: relative; z-index: 2;
-        }
-        #qrcodeDisplay img, #modalQrcodeDisplay img { display: block; margin: 0 auto; }
-
-        .cust-name {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: #ffffff;
-            position: relative; z-index: 2;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-
-        /* VIP TABLE NUMBER */
-        .table-badge {
-            font-size: 52px;
-            font-weight: 900;
-            background: linear-gradient(180deg, #fff2a8, #ffd700);
+            background: linear-gradient(180deg, #fff1a8, #ffd700);
             color: #000;
-            padding: 0px 42px; /* ปรับ Padding ให้พอดี */
-            border-radius: 18px;
-            box-shadow:
-                0 0 25px rgba(255,215,0,0.8),
-                inset 0 -3px 0 rgba(0,0,0,0.2);
-            letter-spacing: 2px;
-            margin-top: 5px;
+            font-weight: 900;
+            font-size: 22px;
+            letter-spacing: 1px;
+            box-shadow: 0 0 25px rgba(255,215,0,0.6), inset 0 -4px 0 rgba(0,0,0,0.25);
             display: inline-block;
-            position: relative; z-index: 2;
-            transition: all 0.3s ease;
+            width: 80%;
         }
-        
+
+        /* QR Code */
+        .vip-qr {
+            background: #fff;
+            border-radius: 18px;
+            padding: 14px;
+            width: 200px; /* ปรับขนาดให้พอดี */
+            height: 200px;
+            margin: 0 auto 10px;
+            box-shadow: 0 0 0 4px #ffd700, 0 0 30px rgba(255,215,0,0.5);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        #qrcodeDisplay img, #modalQrcodeDisplay img { display: block; margin: 0 auto; width: 100%; height: auto; }
+
+        .qr-text {
+            margin-top: 10px;
+            font-size: 10px;
+            color: #aaa;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        /* Customer Name (เพิ่มเองเพื่อให้แสดงชื่อลูกค้า) */
+        .cust-name-display {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* VIP CODE (Table Number) */
+        .vip-code {
+            margin: 10px auto 18px;
+            padding: 5px 20px;
+            font-size: 42px; /* ปรับลดนิดหน่อยกันตกบรรทัด */
+            font-weight: 900;
+            border-radius: 20px;
+            background: linear-gradient(180deg, #fff3b0, #ffd700);
+            color: #000;
+            box-shadow: 0 0 35px rgba(255,215,0,0.6), inset 0 -5px 0 rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+            display: inline-block;
+            min-width: 200px;
+        }
+
+        /* Footer */
+        .vip-footer {
+            font-size: 14px;
+            opacity: 0.95;
+            color: #ddd;
+        }
+        .vip-footer span {
+            font-size: 12px;
+            opacity: 0.7;
+            color: #ffeb3b;
+        }
+
+        /* --- Other Systems Styles --- */
         .table-badge-mini {
             font-size: 1.5rem; font-weight: 800;
             padding: 5px 15px; border-radius: 8px;
@@ -156,15 +169,6 @@
             box-shadow: 0 3px 6px rgba(0,0,0,0.4);
         }
 
-        .footer-note { 
-            margin-top: 20px; 
-            font-size: 14px; 
-            color: rgba(255,255,255,0.9);
-            position: relative; z-index: 2;
-            font-weight: 300; 
-        }
-
-        /* Input Style */
         .form-control, .form-select { 
             background-color: #ffffff !important; 
             border: 2px solid #ddd;
@@ -341,14 +345,35 @@
                 
                 <div id="ticketResult" class="hidden animate__animated animate__fadeInUp">
                     <p class="text-center text-success mb-2">🎉 จองสำเร็จ!</p>
-                    <div class="ticket-card" id="finalTicket">
-                        <div class="event-title">สรรพยา บ้านเรา</div>
-                        <div class="event-sub">โพ-ออก เฟสติวัล</div>
-                        <div class="ticket-header">บัตรจองโต๊ะ</div>
-                        <div class="qr-bg"><div id="qrcodeDisplay"></div></div>
-                        <div class="cust-name" id="displayName">ชื่อลูกค้า</div>
-                        <div class="table-badge" id="displayTable">...</div>
-                        <div class="footer-note">*โปรดแสดงภาพนี้เพื่อเข้างาน</div>
+                    
+                    <div class="vip-ticket" id="finalTicket">
+                      <div class="vip-border">
+                        <div class="vip-header">
+                          <div class="title-main">สรรพยา บ้านเรา</div>
+                          <div class="title-sub">โพ-ออก มิวสิคแคมป์</div>
+                          <div class="live-badge">🎵 LIVE MUSIC CAMP</div>
+                        </div>
+
+                        <div class="vip-pass">👑 VIP PASS</div>
+
+                        <div class="vip-qr">
+                          <div id="qrcodeDisplay"></div>
+                        </div>
+                        <div class="qr-text">SCAN FOR ENTRY</div>
+
+                        <div class="mt-3">
+                            <div class="cust-name-display" id="displayName">ชื่อลูกค้า</div>
+                        </div>
+
+                        <div class="vip-code" id="displayTable">
+                          VIP...
+                        </div>
+
+                        <div class="vip-footer">
+                          🎵 โปรดแสดงบัตรนี้ก่อนเข้างาน<br>
+                          <span>Music • River • Camp Night</span>
+                        </div>
+                      </div>
                     </div>
                     <div class="text-center mt-3 text-muted small">แคปหน้าจอนี้ส่งให้ลูกค้าได้เลยครับ 📸</div>
                     <button onclick="resetForm()" class="btn btn-outline-secondary w-100 mt-3 rounded-pill">จองคิวต่อไป</button>
@@ -418,19 +443,40 @@
 </div>
 
 <div id="ticketModal" class="custom-modal-overlay hidden">
-    <div style="position: relative;">
-        <button onclick="closeTicketModal()" style="position: absolute; top: -15px; right: -15px; z-index: 1000; background: red; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-weight: bold; box-shadow: 0 0 10px rgba(0,0,0,0.5);">X</button>
-        <div class="ticket-card" id="modalTicketCard">
-            <div class="event-title">สรรพยา บ้านเรา</div>
-            <div class="event-sub">โพ-ออก เฟสติวัล</div>
-            <div class="ticket-header">บัตรจองโต๊ะ</div>
-            <div class="qr-bg"><div id="modalQrcodeDisplay"></div></div>
-            <div class="cust-name" id="modalDisplayName">ชื่อลูกค้า</div>
-            <div class="table-badge" id="modalDisplayTable">...</div>
-            <div class="footer-note">*โปรดแสดงภาพนี้เพื่อเข้างาน</div>
+    <div style="position: relative; width: 100%; display:flex; justify-content:center;">
+        <button onclick="closeTicketModal()" style="position: absolute; top: 0px; right: 10px; z-index: 1000; background: red; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-weight: bold; box-shadow: 0 0 10px rgba(0,0,0,0.5);">X</button>
+        
+        <div class="vip-ticket">
+          <div class="vip-border">
+            <div class="vip-header">
+              <div class="title-main">สรรพยา บ้านเรา</div>
+              <div class="title-sub">โพ-ออก มิวสิคแคมป์</div>
+              <div class="live-badge">🎵 LIVE MUSIC CAMP</div>
+            </div>
+
+            <div class="vip-pass">👑 VIP PASS</div>
+
+            <div class="vip-qr">
+              <div id="modalQrcodeDisplay"></div>
+            </div>
+            <div class="qr-text">SCAN FOR ENTRY</div>
+
+            <div class="mt-3">
+                <div class="cust-name-display" id="modalDisplayName">ชื่อลูกค้า</div>
+            </div>
+
+            <div class="vip-code" id="modalDisplayTable">
+              VIP...
+            </div>
+
+            <div class="vip-footer">
+              🎵 โปรดแสดงบัตรนี้ก่อนเข้างาน<br>
+              <span>Music • River • Camp Night</span>
+            </div>
+          </div>
         </div>
-        <div class="text-center mt-3 text-white">แคปหน้าจอนี้ได้เลย 📸</div>
-    </div>
+        </div>
+    <div class="text-center mt-2 text-white w-100" style="position:absolute; bottom: 20px;">แคปหน้าจอนี้ได้เลย 📸</div>
 </div>
 
 <div id="scanModal" class="custom-modal-overlay hidden">
@@ -675,13 +721,12 @@
             document.getElementById('ticketResult').classList.remove('hidden');
             const qrContainer = document.getElementById("qrcodeDisplay");
             qrContainer.innerHTML = ""; 
-            new QRCode(qrContainer, { text: docRef.id, width: 180, height: 180, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
+            new QRCode(qrContainer, { text: docRef.id, width: 170, height: 170, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
             
             document.getElementById('displayName').innerText = name;
             
             const badge = document.getElementById('displayTable');
             badge.innerText = selectedTableID;
-            // ปิดการ override สีที่มาจาก JS เพราะเราใช้ CSS Class สวยกว่า
             // badge.style.background = theme.bg;
             // badge.style.color = theme.text;
 
@@ -791,7 +836,7 @@
 
         const qrContainer = document.getElementById("modalQrcodeDisplay");
         qrContainer.innerHTML = ""; 
-        new QRCode(qrContainer, { text: docId, width: 180, height: 180, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
+        new QRCode(qrContainer, { text: docId, width: 170, height: 170, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
         document.getElementById('ticketModal').classList.remove('hidden');
     };
 
