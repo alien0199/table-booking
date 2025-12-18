@@ -37,34 +37,114 @@
             border-radius: 10px; padding: 10px; width: 100%; margin: 20px 0;
         }
 
-        /* การ์ดบัตรจอง */
+        /* ===== VIP CONCERT TICKET STYLE (NEW) ===== */
         .ticket-card {
-            background: linear-gradient(135deg, #6200ea 0%, #b388ff 100%);
-            border-radius: 25px;
-            padding: 40px 20px;
+            background: radial-gradient(
+                circle at top,
+                #7a3cff 0%,
+                #3a145f 35%,
+                #0b0614 100%
+            );
+            border-radius: 28px;
+            padding: 42px 24px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(98, 0, 234, 0.5);
-            border: 4px solid #fff;
             position: relative;
+            max-width: 360px;
+            margin: 0 auto;
+            border: 2px solid rgba(255, 215, 0, 0.8); /* ขอบทอง */
+            box-shadow:
+                0 0 25px rgba(255, 215, 0, 0.35), /* แสงฟุ้งสีทอง */
+                0 20px 60px rgba(0, 0, 0, 0.8);
+            overflow: hidden; /* ป้องกันแสงเกินขอบ */
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            margin: 0 auto; max-width: 350px;
         }
-        .event-title { font-size: 28px; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin-bottom: 5px; line-height: 1.1; }
-        .event-sub { font-size: 24px; color: #ffeb3b; font-weight: 700; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); margin-bottom: 20px; }
-        .ticket-header { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.6); padding: 5px 25px; border-radius: 50px; font-size: 16px; margin-bottom: 25px; backdrop-filter: blur(5px); }
-        
-        .qr-bg { background: #fff; padding: 15px; border-radius: 15px; margin: 0 auto 20px auto; width: 210px; height: 210px; display: flex; align-items: center; justify-content: center; }
+
+        /* เอฟเฟกต์ไฟเวที */
+        .ticket-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 10%, rgba(255,255,255,0.15), transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(138,43,226,0.35), transparent 45%);
+            border-radius: 28px;
+            pointer-events: none;
+        }
+
+        .event-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 0 12px rgba(255,255,255,0.4);
+            position: relative; z-index: 2;
+            margin-bottom: 5px; line-height: 1.1;
+        }
+        .event-sub {
+            font-size: 22px;
+            font-weight: 800;
+            color: #ffeb3b;
+            margin-bottom: 20px;
+            text-shadow: 0 0 12px rgba(255,235,59,0.7);
+            position: relative; z-index: 2;
+        }
+
+        /* VIP Badge Header */
+        .ticket-header {
+            display: inline-block;
+            padding: 6px 26px;
+            border-radius: 50px;
+            background: rgba(0,0,0,0.35);
+            border: 1px solid #ffd700;
+            color: #ffd700;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+            box-shadow: 0 0 12px rgba(255,215,0,0.5);
+            position: relative; z-index: 2;
+            backdrop-filter: blur(5px);
+            font-size: 16px;
+        }
+
+        /* QR Code Area */
+        .qr-bg {
+            background: #ffffff;
+            padding: 14px;
+            border-radius: 18px;
+            width: 210px;
+            height: 210px;
+            margin: 0 auto 20px auto;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow:
+                0 0 0 4px #ffd700,
+                0 0 30px rgba(255,215,0,0.6);
+            position: relative; z-index: 2;
+        }
         #qrcodeDisplay img, #modalQrcodeDisplay img { display: block; margin: 0 auto; }
-        
-        .cust-name { font-size: 26px; font-weight: 700; margin-bottom: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
-        
-        /* ป้ายเลขโต๊ะ */
-        .table-badge { 
-            font-size: 48px; font-weight: 700; 
-            background: #ffeb3b; color: #000; 
-            padding: 0px 40px; border-radius: 15px; 
-            box-shadow: 0 5px 10px rgba(0,0,0,0.3); 
-            margin-top: 5px; display: inline-block; 
+
+        .cust-name {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #ffffff;
+            position: relative; z-index: 2;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        /* VIP TABLE NUMBER */
+        .table-badge {
+            font-size: 52px;
+            font-weight: 900;
+            background: linear-gradient(180deg, #fff2a8, #ffd700);
+            color: #000;
+            padding: 0px 42px; /* ปรับ Padding ให้พอดี */
+            border-radius: 18px;
+            box-shadow:
+                0 0 25px rgba(255,215,0,0.8),
+                inset 0 -3px 0 rgba(0,0,0,0.2);
+            letter-spacing: 2px;
+            margin-top: 5px;
+            display: inline-block;
+            position: relative; z-index: 2;
             transition: all 0.3s ease;
         }
         
@@ -76,7 +156,13 @@
             box-shadow: 0 3px 6px rgba(0,0,0,0.4);
         }
 
-        .footer-note { margin-top: 20px; font-size: 14px; opacity: 0.9; font-weight: 300; }
+        .footer-note { 
+            margin-top: 20px; 
+            font-size: 14px; 
+            color: rgba(255,255,255,0.9);
+            position: relative; z-index: 2;
+            font-weight: 300; 
+        }
 
         /* Input Style */
         .form-control, .form-select { 
@@ -595,9 +681,9 @@
             
             const badge = document.getElementById('displayTable');
             badge.innerText = selectedTableID;
-            const theme = window.getZoneTheme(selectedTableID);
-            badge.style.background = theme.bg;
-            badge.style.color = theme.text;
+            // ปิดการ override สีที่มาจาก JS เพราะเราใช้ CSS Class สวยกว่า
+            // badge.style.background = theme.bg;
+            // badge.style.color = theme.text;
 
             btn.disabled = false; btn.innerText = "✅ จองสำเร็จ (กดจองต่อ)";
             
@@ -698,9 +784,10 @@
         document.getElementById('modalDisplayName').innerText = name;
         const badge = document.getElementById('modalDisplayTable');
         badge.innerText = table;
-        const theme = window.getZoneTheme(table);
-        badge.style.background = theme.bg;
-        badge.style.color = theme.text;
+        // ไม่ต้อง override สี JS เพราะ CSS จัดการให้แล้ว
+        // const theme = window.getZoneTheme(table);
+        // badge.style.background = theme.bg;
+        // badge.style.color = theme.text;
 
         const qrContainer = document.getElementById("modalQrcodeDisplay");
         qrContainer.innerHTML = ""; 
