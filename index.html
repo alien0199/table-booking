@@ -12,275 +12,256 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&display=swap');
 
-        body { font-family: 'Kanit', sans-serif; background-color: #050505; color: #fff; padding-bottom: 20px; position: relative; min-height: 100vh; }
-        .container { max-width: 450px; margin-top: 15px; padding-bottom: 20px; }
+        :root {
+            --primary-gold: #ffeb3b;
+            --secondary-gold: #ffc107;
+            --dark-bg: #050505;
+            --card-bg: #1a1a1a;
+            --neon-glow: 0 0 10px rgba(255, 235, 59, 0.5);
+        }
+
+        body { 
+            font-family: 'Kanit', sans-serif; 
+            background-color: var(--dark-bg); 
+            background-image: radial-gradient(circle at 50% 0%, #2a2a2a 0%, #050505 80%);
+            color: #fff; 
+            padding-bottom: 40px; 
+            position: relative; 
+            min-height: 100vh; 
+        }
+
+        .container { max-width: 480px; margin-top: 20px; padding-bottom: 20px; }
         .hidden { display: none !important; }
         
+        /* --- Animation --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse-gold { 0% { box-shadow: 0 0 0 0 rgba(255, 235, 59, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 235, 59, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 235, 59, 0); } }
+
+        .tab-pane { animation: fadeIn 0.4s ease-out; }
+
         /* --- หน้าด่าน (Gate Screen) --- */
         #gateScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000000; z-index: 99999;
+            background: rgba(0,0,0,0.95); z-index: 99999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px;
+            backdrop-filter: blur(10px);
         }
         .gate-box {
-            background: #1a1a1a; padding: 30px; border-radius: 20px;
-            text-align: center; border: 2px solid #333;
-            box-shadow: 0 0 30px rgba(0,198,255,0.2);
-            width: 100%; max-width: 350px;
+            background: rgba(30, 30, 30, 0.8); 
+            padding: 40px 30px; 
+            border-radius: 24px;
+            text-align: center; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            width: 90%; max-width: 350px;
         }
         .gate-input {
-            background: #333; color: #fff; border: 2px solid #555;
-            font-size: 24px; text-align: center; letter-spacing: 5px;
-            border-radius: 10px; padding: 10px; width: 100%; margin: 20px 0;
+            background: #222; color: var(--primary-gold); 
+            border: 2px solid #444;
+            font-size: 28px; text-align: center; letter-spacing: 8px; font-weight: bold;
+            border-radius: 12px; padding: 15px; width: 100%; margin: 25px 0;
+            transition: 0.3s;
         }
+        .gate-input:focus { border-color: var(--primary-gold); box-shadow: var(--neon-glow); outline: none; }
 
-        /* ===== VIP CONCERT TICKET STYLE (NEW) ===== */
+        /* --- Ticket Card (VIP Design) --- */
         .ticket-card {
-            background: radial-gradient(
-                circle at top,
-                #7a3cff 0%,
-                #3a145f 35%,
-                #0b0614 100%
-            );
-            border-radius: 28px;
-            padding: 42px 24px;
+            background: radial-gradient(circle at top right, #4a1c85 0%, #200a35 40%, #000 100%);
+            border-radius: 24px;
+            padding: 40px 20px;
             text-align: center;
             position: relative;
             max-width: 360px;
             margin: 0 auto;
-            border: 2px solid rgba(255, 215, 0, 0.8); /* ขอบทอง */
-            box-shadow:
-                0 0 25px rgba(255, 215, 0, 0.35), /* แสงฟุ้งสีทอง */
-                0 20px 60px rgba(0, 0, 0, 0.8);
-            overflow: hidden; /* ป้องกันแสงเกินขอบ */
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 30px rgba(122, 60, 255, 0.2), inset 0 0 20px rgba(0,0,0,0.8);
+            overflow: hidden;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-
-        /* เอฟเฟกต์ไฟเวที */
-        .ticket-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at 20% 10%, rgba(255,255,255,0.15), transparent 40%),
-                radial-gradient(circle at 80% 20%, rgba(138,43,226,0.35), transparent 45%);
-            border-radius: 28px;
-            pointer-events: none;
+        /* Ticket Decoration */
+        .ticket-card::after {
+            content: ""; position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%);
+            width: 200px; height: 100px; background: rgba(255, 215, 0, 0.1); filter: blur(40px); pointer-events: none;
         }
 
-        .event-title {
-            font-size: 30px;
-            font-weight: 800;
-            color: #ffffff;
-            text-shadow: 0 0 12px rgba(255,255,255,0.4);
-            position: relative; z-index: 2;
-            margin-bottom: 5px; line-height: 1.1;
-        }
-        .event-sub {
-            font-size: 22px;
-            font-weight: 800;
-            color: #ffeb3b;
-            margin-bottom: 20px;
-            text-shadow: 0 0 12px rgba(255,235,59,0.7);
-            position: relative; z-index: 2;
-        }
+        .event-title { font-size: 28px; font-weight: 800; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); margin-bottom: 2px; line-height: 1.1; position: relative; z-index: 2;}
+        .event-sub { font-size: 20px; font-weight: 700; color: var(--primary-gold); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; position: relative; z-index: 2;}
 
-        /* VIP Badge Header */
         .ticket-header {
-            display: inline-block;
-            padding: 6px 26px;
-            border-radius: 50px;
-            background: rgba(0,0,0,0.35);
-            border: 1px solid #ffd700;
-            color: #ffd700;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 24px;
-            box-shadow: 0 0 12px rgba(255,215,0,0.5);
+            display: inline-block; padding: 4px 20px; border-radius: 50px;
+            background: rgba(0,0,0,0.4); border: 1px solid var(--primary-gold);
+            color: var(--primary-gold); font-weight: 600; font-size: 14px;
+            margin-bottom: 20px; box-shadow: 0 0 10px rgba(255,215,0,0.2);
             position: relative; z-index: 2;
-            backdrop-filter: blur(5px);
-            font-size: 16px;
         }
 
-        /* QR Code Area */
         .qr-bg {
-            background: #ffffff;
-            padding: 14px;
-            border-radius: 18px;
-            width: 210px;
-            height: 210px;
-            margin: 0 auto 20px auto;
+            background: #fff; padding: 10px; border-radius: 16px;
+            width: 200px; height: 200px; margin: 0 auto 20px auto;
             display: flex; align-items: center; justify-content: center;
-            box-shadow:
-                0 0 0 4px #ffd700,
-                0 0 30px rgba(255,215,0,0.6);
+            box-shadow: 0 0 0 2px var(--primary-gold), 0 10px 30px rgba(0,0,0,0.5);
             position: relative; z-index: 2;
         }
-        #qrcodeDisplay img, #modalQrcodeDisplay img { display: block; margin: 0 auto; }
+        #qrcodeDisplay img, #modalQrcodeDisplay img { display: block; width: 100%; margin: 0 auto;}
 
-        .cust-name {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: #ffffff;
-            position: relative; z-index: 2;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-
-        /* VIP TABLE NUMBER */
+        .cust-name { font-size: 20px; font-weight: 600; margin-bottom: 8px; color: #eee; position: relative; z-index: 2;}
         .table-badge {
-            font-size: 52px;
-            font-weight: 900;
-            background: linear-gradient(180deg, #fff2a8, #ffd700);
-            color: #000;
-            padding: 0px 42px; /* ปรับ Padding ให้พอดี */
-            border-radius: 18px;
-            box-shadow:
-                0 0 25px rgba(255,215,0,0.8),
-                inset 0 -3px 0 rgba(0,0,0,0.2);
-            letter-spacing: 2px;
-            margin-top: 5px;
-            display: inline-block;
+            font-size: 48px; font-weight: 900;
+            background: -webkit-linear-gradient(#fff2a8, #ffd700);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+            margin-top: 0; line-height: 1; letter-spacing: -1px;
             position: relative; z-index: 2;
-            transition: all 0.3s ease;
         }
-        
-        .table-badge-mini {
-            font-size: 1.5rem; font-weight: 800;
-            padding: 5px 15px; border-radius: 8px;
-            display: inline-block; width: 100%;
-            margin-bottom: 5px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
-        }
+        .footer-note { margin-top: 25px; font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 300; position: relative; z-index: 2;}
 
-        .footer-note { 
-            margin-top: 20px; 
-            font-size: 14px; 
-            color: rgba(255,255,255,0.9);
-            position: relative; z-index: 2;
-            font-weight: 300; 
-        }
-
-        /* Input Style */
+        /* --- Forms & Inputs --- */
         .form-control, .form-select { 
-            background-color: #ffffff !important; 
-            border: 2px solid #ddd;
-            color: #0056b3 !important; 
+            background-color: #fff !important; 
+            border: none;
+            color: #333 !important; 
             font-weight: 600; 
             border-radius: 12px; 
-            height: 50px; 
+            height: 55px; 
             font-size: 1.1rem; 
             text-align: center; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
         }
         .form-control:focus, .form-select:focus { 
-            background-color: #f0f8ff !important; 
-            border-color: #0056b3; 
-            color: #0056b3 !important; 
-            box-shadow: 0 0 10px rgba(0, 86, 179, 0.3); 
+            box-shadow: 0 0 0 4px rgba(255, 235, 59, 0.3); 
         }
-        .btn-main { background: linear-gradient(90deg, #00c6ff, #0072ff); border: none; height: 55px; font-size: 1.2rem; font-weight: 700; color: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4); }
-        .btn-main:disabled { background: #555; color: #aaa; box-shadow: none; cursor: not-allowed; }
 
-        .nav-pills .nav-link { background: #222; color: #aaa; border-radius: 10px; margin: 0 2px; }
-        .nav-pills .nav-link.active { background: #6200ea; color: #fff; font-weight: bold; }
+        /* --- Buttons --- */
+        .btn-main { 
+            background: linear-gradient(135deg, #00c6ff, #0072ff); 
+            border: none; height: 60px; 
+            font-size: 1.3rem; font-weight: 700; color: #fff; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 20px rgba(0, 114, 255, 0.3); 
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-main:active { transform: scale(0.98); }
+        .btn-main:disabled { background: #333; color: #666; box-shadow: none; cursor: not-allowed; }
+
+        /* --- Navigation Tabs --- */
+        .nav-pills { background: #111; padding: 5px; border-radius: 16px; border: 1px solid #333; margin-bottom: 25px; }
+        .nav-pills .nav-link { 
+            background: transparent; color: #888; border-radius: 12px; 
+            margin: 0; font-weight: 500; transition: all 0.3s;
+        }
+        .nav-pills .nav-link.active { 
+            background: var(--primary-gold); color: #000; font-weight: 800; 
+            box-shadow: 0 2px 10px rgba(255, 235, 59, 0.4);
+        }
+        .nav-pills .nav-link:hover:not(.active) { color: #fff; }
+
+        /* --- Seat Map (VIP Style) --- */
+        .seat-screen {
+            width: 80%; margin: 0 auto 25px auto; height: 8px; 
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            border-radius: 50%; opacity: 0.5;
+            box-shadow: 0 0 15px rgba(255,255,255,0.5);
+            position: relative; text-align: center;
+        }
+        .seat-screen::after { content: "STAGE"; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); font-size: 10px; color: #666; letter-spacing: 2px;}
+
+        .seat-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+            padding: 15px; background: #111; border-radius: 20px;
+            border: 1px solid #333; max-height: 350px; overflow-y: auto;
+        }
+        .seat-item {
+            background-color: #222;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 10px 0;
+            text-align: center; cursor: pointer;
+            font-size: 0.85rem; font-weight: 600; color: #666;
+            transition: all 0.2s; position: relative;
+        }
+        .seat-item:hover { border-color: #666; color: #fff; transform: translateY(-2px); }
+
+        .seat-taken {
+            background-color: #0f0f0f; color: #333; border-color: #1a1a1a;
+            cursor: not-allowed; opacity: 0.6;
+        }
+        .seat-selected { 
+            background-color: var(--primary-gold) !important; 
+            color: #000 !important; font-weight: 900; border-color: var(--secondary-gold);
+            box-shadow: 0 0 15px var(--primary-gold);
+            animation: pulse-gold 2s infinite;
+            transform: scale(1.05); z-index: 2;
+        }
+
+        .selected-display {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid #333; border-radius: 16px;
+            padding: 20px; margin-bottom: 25px; text-align: center;
+            backdrop-filter: blur(5px);
+        }
+        #selectedTableText { font-size: 2.5rem; line-height: 1; margin-top: 5px; text-shadow: 0 0 20px rgba(255,235,59,0.3); }
+
+        /* --- Status Cards --- */
+        .status-card { 
+            background: #1e1e1e; border-radius: 12px; border: 1px solid #333; 
+            transition: all 0.2s; cursor: pointer; overflow: hidden; position: relative;
+        }
+        .status-card:active { transform: scale(0.95); }
+        .status-booked { border-bottom: 3px solid #ffc107; }
+        .status-partial { border-bottom: 3px solid #fd7e14; }
+        .status-full { border-bottom: 3px solid #2ecc71; opacity: 0.5; filter: grayscale(0.8); }
         
-        .status-card { background: #222; border-radius: 12px; border: 1px solid #333; transition: all 0.2s; cursor: pointer; }
-        .status-booked { border-bottom: 4px solid #ffc107; }
-        .status-partial { border-bottom: 4px solid #fd7e14; }
-        .status-full { border-bottom: 4px solid #2ecc71; opacity: 0.7; }
-        
+        .table-badge-mini {
+            font-size: 1.2rem; font-weight: 800; padding: 5px;
+            display: block; width: 100%; border-radius: 6px;
+            background: #333; color: #aaa; margin-bottom: 5px;
+        }
+
+        /* --- Modals --- */
         .custom-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 9999;
             display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px); animation: fadeIn 0.2s;
         }
+        .modal-content { background-color: #1a1a1a; border: 1px solid #444; }
+        .modal-header, .modal-footer { border-color: #333; }
         
-        .admin-table-container { overflow-x: auto; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .table-custom { background-color: #ffffff; color: #000000; font-size: 0.9rem; width: 100%; white-space: nowrap; margin-bottom: 0; }
-        .table-custom th { background-color: #212529; color: #ffeb3b; padding: 15px; font-weight: 600; }
-        .table-custom td { vertical-align: middle; color: #000000; padding: 12px 15px; border-bottom: 1px solid #dee2e6; }
-
-        /* --- VIP Mode Styles --- */
-        .seat-screen {
-            width: 100%; height: 15px; background: #444; margin-bottom: 20px;
-            border-radius: 50%; box-shadow: 0 5px 15px rgba(255,255,255,0.1);
-            text-align: center; color: #888; font-size: 10px; line-height: 15px;
+        /* --- Admin Table --- */
+        .admin-table-container { 
+            overflow-x: auto; background: #1a1a1a; border-radius: 12px; 
+            border: 1px solid #333; box-shadow: 0 5px 20px rgba(0,0,0,0.3); 
         }
-        .seat-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr); /* แถวละ 5 โต๊ะ */
-            gap: 8px;
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 5px;
-            background: #111;
-            border-radius: 10px;
-        }
-        .seat-item {
-            background-color: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 8px;
-            padding: 12px 0;
-            text-align: center;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #ccc;
-            transition: all 0.2s;
-            position: relative;
-        }
-        .seat-item:hover { transform: scale(1.05); border-color: #fff; }
-
-        /* สถานะที่นั่ง */
-        .seat-taken {
-            background-color: #111;
-            color: #333;
-            border: 1px dashed #333;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-        .seat-taken::after { content: '❌'; position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size: 0.8rem; opacity: 0.5; }
-
-        /* สีตอนเลือกแล้ว */
-        .seat-selected { 
-            background-color: #ffeb3b !important; 
-            color: #000 !important; 
-            box-shadow: 0 0 15px rgba(255, 235, 59, 0.5);
-            border-color: #ffeb3b;
-            transform: scale(1.1);
-            font-weight: 800;
-        }
-
-        /* ธีม VIP */
-        .zone-vip-theme { border-bottom: 3px solid #ffeb3b; }
-
-        .selected-display {
-            background: #222; border: 1px solid #333; border-radius: 12px;
-            padding: 15px; margin-bottom: 20px; text-align: center;
-        }
+        .table-custom { background-color: #1a1a1a; margin-bottom: 0; width: 100%; }
+        .table-custom th { background-color: #000; color: #888; font-weight: 400; text-transform: uppercase; font-size: 0.8rem; border-bottom: 1px solid #333; padding: 15px; }
+        .table-custom td { background-color: #1a1a1a; color: #ddd; vertical-align: middle; border-bottom: 1px solid #2a2a2a; padding: 15px; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #666; }
     </style>
 </head>
 <body>
 
 <div id="gateScreen">
     <div class="gate-box">
-        <h2 style="color:#ffeb3b; font-weight:bold; margin-bottom:0;">🔒 จำกัดสิทธิ์</h2>
-        <p class="text-secondary small">สำหรับเจ้าหน้าที่เท่านั้น</p>
+        <h2 style="color:var(--primary-gold); font-weight:800; margin-bottom:0; text-transform:uppercase;">🔒 RESTRICTED</h2>
+        <p class="text-secondary small mt-2">สำหรับเจ้าหน้าที่เท่านั้น</p>
         
-        <input type="password" id="accessPass" class="gate-input" placeholder="รหัสผ่าน" inputmode="numeric">
+        <input type="password" id="accessPass" class="gate-input" placeholder="PIN" inputmode="numeric">
         
-        <button onclick="checkAccess()" class="btn btn-primary w-100 py-3 rounded-pill fw-bold fs-5">เข้าใช้งาน</button>
+        <button onclick="checkAccess()" class="btn btn-main w-100 py-3 fw-bold fs-5">เข้าใช้งาน</button>
         <p id="gateError" class="text-danger mt-3 small hidden">❌ รหัสผ่านไม่ถูกต้อง</p>
     </div>
 </div>
 <div class="container">
     <div class="user-container text-center mb-4">
-        <h4 class="fw-bold mb-0">✨ ระบบจองโต๊ะ <span style="color:#ffeb3b">สรรพยาฯ</span></h4>
-        <h5 class="fw-bold mt-1" style="color: #ffeb3b; text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);">โพ-ออก มิวสิคแคมป์</h5>
+        <h4 class="fw-bold mb-0">✨ ระบบจองโต๊ะ <span style="color:var(--primary-gold)">สรรพยาฯ</span></h4>
+        <h5 class="fw-bold mt-1" style="color: var(--primary-gold); text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);">โพ-ออก เฟสติวัล</h5>
 
         <ul class="nav nav-pills nav-fill mt-4">
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#create">📝 จอง</button></li>
@@ -293,57 +274,52 @@
     <div class="tab-content">
         <div class="tab-pane fade show active" id="create">
             <div class="user-container">
-                <div class="card p-4 border-0 shadow mb-4" style="background: #151515; border-radius: 20px;">
-                    
-                    <div class="mb-3 text-center p-2" style="border: 2px solid #ffeb3b; border-radius: 15px; background: rgba(255, 235, 59, 0.1);">
-                        <h3 class="fw-bold m-0" style="color: #ffeb3b; text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);">
-                            👑 VIP ZONE
-                        </h3>
-                        <span class="text-white-50 small">โซนพิเศษ 50 ที่นั่ง (VIP001 - VIP050)</span>
-                    </div>
+                <div class="mb-3 text-center p-3" style="border: 1px solid var(--primary-gold); border-radius: 20px; background: rgba(255, 235, 59, 0.05);">
+                    <h3 class="fw-bold m-0" style="color: var(--primary-gold); text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);">
+                        👑 VIP ZONE
+                    </h3>
+                    <span class="text-white-50 small">โซนพิเศษ 50 ที่นั่ง (VIP001 - VIP050)</span>
+                </div>
 
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between text-white-50 small mb-1">
-                            <span>ผังที่นั่ง (แตะเพื่อเลือก)</span>
-                            <span id="seatLoading" class="hidden text-warning">⏳ โหลดข้อมูล...</span>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between text-white-50 small mb-1">
+                        <span>ผังที่นั่ง (แตะเพื่อเลือก)</span>
+                        <span id="seatLoading" class="hidden text-warning">⏳ โหลดข้อมูล...</span>
+                    </div>
+                    <div class="seat-screen"></div>
+                    <div id="seatMapContainer" class="seat-grid">
                         </div>
-                        <div class="seat-screen">STAGE / SCREEN</div>
-                        <div id="seatMapContainer" class="seat-grid">
-                            </div>
-                    </div>
+                </div>
 
-                    <div class="selected-display">
-                        <span class="text-secondary small">โต๊ะที่เลือก:</span>
-                        <h2 id="selectedTableText" class="fw-bold m-0" style="color:#777">ยังไม่ระบุ</h2>
-                        <input type="hidden" id="finalTableNo">
-                    </div>
+                <div class="selected-display">
+                    <span class="text-secondary small">โต๊ะที่เลือก:</span>
+                    <h2 id="selectedTableText" class="fw-bold m-0" style="color:#777">ยังไม่ระบุ</h2>
+                    <input type="hidden" id="finalTableNo">
+                </div>
 
-                    <hr class="border-secondary">
-
-                    <div class="mb-3">
-                        <input type="text" id="custName" class="form-control" placeholder="ชื่อลูกค้า">
-                    </div>
-                    <div class="mb-3">
-                        <input type="tel" id="custPhone" class="form-control" placeholder="เบอร์โทร">
-                    </div>
-                    <div class="mb-3">
-                        <input type="text" id="paymentRef" class="form-control" placeholder="หมายเหตุ (ถ้ามี)">
-                    </div>
-                    <div class="mb-3">
-                        <select id="paymentMethod" class="form-select">
-                            <option value="เงินสด">💵 เงินสด</option>
-                            <option value="โอนเข้าบัญชี">🏦 โอนเข้าบัญชี</option>
-                        </select>
-                    </div>
-                    
-                    <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100 mt-2" disabled>✅ ยืนยันการจอง</button>
+                <div class="mb-3">
+                    <input type="text" id="custName" class="form-control" placeholder="ชื่อลูกค้า">
+                </div>
+                <div class="mb-3">
+                    <input type="tel" id="custPhone" class="form-control" placeholder="เบอร์โทร">
+                </div>
+                <div class="mb-3">
+                    <input type="text" id="paymentRef" class="form-control" placeholder="หมายเหตุ (ถ้ามี)">
+                </div>
+                <div class="mb-3">
+                    <select id="paymentMethod" class="form-select">
+                        <option value="เงินสด">💵 เงินสด</option>
+                        <option value="โอนเข้าบัญชี">🏦 โอนเข้าบัญชี</option>
+                    </select>
                 </div>
                 
-                <div id="ticketResult" class="hidden animate__animated animate__fadeInUp">
+                <button onclick="addBooking()" id="btnSave" class="btn btn-main w-100 mt-2" disabled>✅ ยืนยันการจอง</button>
+                
+                <div id="ticketResult" class="hidden animate__animated animate__fadeInUp mt-4">
                     <p class="text-center text-success mb-2">🎉 จองสำเร็จ!</p>
                     <div class="ticket-card" id="finalTicket">
                         <div class="event-title">สรรพยา บ้านเรา</div>
-                        <div class="event-sub">โพ-ออก มิวสิคแคมป์</div>
+                        <div class="event-sub">โพ-ออก เฟสติวัล</div>
                         <div class="ticket-header">บัตรจองโต๊ะ</div>
                         <div class="qr-bg"><div id="qrcodeDisplay"></div></div>
                         <div class="cust-name" id="displayName">ชื่อลูกค้า</div>
@@ -358,12 +334,12 @@
 
         <div class="tab-pane fade" id="status">
             <div class="user-container">
-                <button onclick="loadTableStatus()" class="btn btn-sm btn-secondary mb-3 w-100">🔄 รีเฟรชข้อมูล</button>
+                <button onclick="loadTableStatus()" class="btn btn-sm btn-secondary mb-3 w-100 rounded-pill">🔄 รีเฟรชข้อมูล</button>
                 
                 <div class="mb-3">
                     <input type="text" id="searchInput" class="form-control" placeholder="🔍 ค้นหาเลขโต๊ะ..." onkeyup="filterStatus()">
                 </div>
-                <div class="alert alert-info small text-center p-1 mb-2">ℹ️ แตะที่การ์ดเพื่อดูบัตรจอง</div>
+                <div class="alert alert-dark small text-center p-1 mb-2 border-secondary text-secondary">ℹ️ แตะที่การ์ดเพื่อดูบัตรจอง</div>
                 <div id="statusList" class="row g-2"></div>
             </div>
         </div>
@@ -371,10 +347,10 @@
         <div class="tab-pane fade" id="scan">
             <div class="user-container">
                 <div class="card p-3 border-0 bg-dark text-center" style="border-radius: 20px;">
-                    <div id="reader" style="border-radius: 15px; overflow: hidden;"></div>
+                    <div id="reader" style="border-radius: 15px; overflow: hidden; border: 2px solid var(--primary-gold);"></div>
                     <div id="scanResult" class="mt-3 text-white fw-bold">พร้อมสแกน...</div>
-                    <button onclick="startScanner()" class="btn btn-primary mt-3 w-100 py-3 rounded-pill">📸 เปิดกล้อง</button>
-                    <button onclick="stopScanner()" class="btn btn-secondary mt-2 w-100 hidden" id="stopCamBtn">ปิดกล้อง</button>
+                    <button onclick="startScanner()" class="btn btn-main mt-3 w-100 py-3 rounded-pill">📸 เปิดกล้อง</button>
+                    <button onclick="stopScanner()" class="btn btn-secondary mt-2 w-100 hidden rounded-pill" id="stopCamBtn">ปิดกล้อง</button>
                 </div>
             </div>
         </div>
@@ -395,12 +371,12 @@
                 
                 <div class="row g-2 mb-3">
                     <div class="col-8">
-                        <button onclick="loadBookingsAdmin()" class="btn btn-info w-100 fw-bold">
+                        <button onclick="loadBookingsAdmin()" class="btn btn-info w-100 fw-bold rounded-pill">
                             <i class="bi bi-arrow-clockwise"></i> โหลดข้อมูลล่าสุด
                         </button>
                     </div>
                     <div class="col-4">
-                        <button onclick="exportToCSV()" class="btn btn-success w-100 fw-bold">
+                        <button onclick="exportToCSV()" class="btn btn-success w-100 fw-bold rounded-pill">
                             📂 Export
                         </button>
                     </div>
@@ -419,10 +395,10 @@
 
 <div id="ticketModal" class="custom-modal-overlay hidden">
     <div style="position: relative;">
-        <button onclick="closeTicketModal()" style="position: absolute; top: -15px; right: -15px; z-index: 1000; background: red; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-weight: bold; box-shadow: 0 0 10px rgba(0,0,0,0.5);">X</button>
+        <button onclick="closeTicketModal()" style="position: absolute; top: -15px; right: -15px; z-index: 1000; background: #333; color: white; border: 2px solid #fff; border-radius: 50%; width: 40px; height: 40px; font-weight: bold; box-shadow: 0 0 10px rgba(0,0,0,0.5);">X</button>
         <div class="ticket-card" id="modalTicketCard">
             <div class="event-title">สรรพยา บ้านเรา</div>
-            <div class="event-sub">โพ-ออก มิวสิคแคมป์</div>
+            <div class="event-sub">โพ-ออก เฟสติวัล</div>
             <div class="ticket-header">บัตรจองโต๊ะ</div>
             <div class="qr-bg"><div id="modalQrcodeDisplay"></div></div>
             <div class="cust-name" id="modalDisplayName">ชื่อลูกค้า</div>
@@ -434,13 +410,13 @@
 </div>
 
 <div id="scanModal" class="custom-modal-overlay hidden">
-    <div style="background:#fff;color:#000;width:90%;max-width:400px;padding:25px;border-radius:20px;text-align:center;border:5px solid #ffeb3b;">
-        <div style="font-size:2rem;font-weight:800;margin-bottom:10px;">📥 เช็คอิน</div>
-        <div id="modalInfo" style="font-size:1.3rem;font-weight:500;margin-bottom:15px;"></div>
-        <label class="d-block text-start fw-bold mt-2" style="font-size:1.2rem;">ระบุจำนวน (คน):</label>
-        <input type="number" id="modalPaxInput" style="width:100%;height:70px;font-size:3rem;text-align:center;font-weight:bold;border:3px solid #000;border-radius:15px;margin:10px 0 20px 0;background:#f8f9fa;color:#000;" value="1" min="1">
-        <button onclick="confirmScan()" class="btn w-100 py-3 fs-4 fw-bold btn-success mb-2">✅ ยืนยัน</button>
-        <button onclick="closeScanModal()" class="btn w-100 py-3 fs-4 fw-bold btn-danger">❌ ยกเลิก</button>
+    <div style="background:#1a1a1a;color:#fff;width:90%;max-width:400px;padding:25px;border-radius:24px;text-align:center;border:1px solid #444; box-shadow: 0 0 30px rgba(255,235,59,0.2);">
+        <div style="font-size:2rem;font-weight:800;margin-bottom:10px; color: var(--primary-gold);">📥 เช็คอิน</div>
+        <div id="modalInfo" style="font-size:1.1rem;font-weight:400;margin-bottom:15px; color:#ddd;"></div>
+        <label class="d-block text-start fw-bold mt-2" style="font-size:1rem; color:#888;">ระบุจำนวน (คน):</label>
+        <input type="number" id="modalPaxInput" style="width:100%;height:70px;font-size:3rem;text-align:center;font-weight:bold;border:2px solid #444;border-radius:15px;margin:10px 0 20px 0;background:#111;color:var(--primary-gold);" value="1" min="1">
+        <button onclick="confirmScan()" class="btn w-100 py-3 fs-4 fw-bold btn-success mb-2 rounded-pill">✅ ยืนยัน</button>
+        <button onclick="closeScanModal()" class="btn w-100 py-3 fs-4 fw-bold btn-danger rounded-pill">❌ ยกเลิก</button>
     </div>
 </div>
 
